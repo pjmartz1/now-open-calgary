@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Now Open Calgary – Discover New Businesses in Calgary</title>
+    <meta name="description" content="Explore Calgary's newest restaurants, shops, and local services with Now Open Calgary. Updated daily from City of Calgary data – see what's new in your neighbourhood today." />
+    <meta name="keywords" content="new businesses in Calgary, grand openings Calgary, opening soon Calgary, local business directory Calgary, Calgary restaurants, Calgary shops, Calgary services" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nowopencalgary.com/" />
+    <meta property="og:title" content="Now Open Calgary – Discover New Businesses in Calgary" />
+    <meta property="og:description" content="Find Calgary's newest restaurants, shops, and services – updated daily from official City of Calgary data." />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://nowopencalgary.com/" />
+    <meta property="twitter:title" content="Now Open Calgary – Discover New Businesses in Calgary" />
+    <meta property="twitter:description" content="Find Calgary's newest restaurants, shops, and services – updated daily from official City of Calgary data." />
+    <meta property="twitter:image" content="/og-image.png" />
+    
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Now Open Calgary" />
+    <link rel="canonical" href="https://nowopencalgary.com/" />
+    
+    <!-- Fix COEP issues for embedded content like Google Maps -->
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless">
+    
+    <!-- Local Business Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Now Open Calgary",
+      "url": "https://nowopencalgary.com",
+      "description": "Discover Calgary's newest restaurants, shops, and local services. Updated daily from City of Calgary data.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://nowopencalgary.com/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
