@@ -64,8 +64,15 @@ export const fetchNewBusinesses = async (daysBack = 365) => { // Increased from 
     // Calgary API expects this exact format: YYYY-MM-DDTHH:mm:ss
     const dateString = cutoffDate.toISOString().slice(0, 19); // Remove milliseconds
     
-    // Build URL with proper encoding - increased limit to 2000 for more data
-    const apiUrl = `${CALGARY_API_BASE}?$where=first_iss_dt>'${dateString}'&status=Issued&$limit=2000&$order=first_iss_dt DESC`;
+    // Build URL with proper encoding - use URLSearchParams for correct encoding
+    const params = new URLSearchParams({
+      '$where': `first_iss_dt>'${dateString}'`,
+      'status': 'Issued',
+      '$limit': '2000',
+      '$order': 'first_iss_dt DESC'
+    });
+    
+    const apiUrl = `${CALGARY_API_BASE}?${params.toString()}`;
     
     console.log('🌐 Calgary API URL:', apiUrl);
     
@@ -96,7 +103,6 @@ export const fetchNewBusinesses = async (daysBack = 365) => { // Increased from 
           business_name: business.business_name || business.tradename || 'Unknown Business',
           trade_name: business.trade_name || business.tradename || undefined,
           business_type: business.business_type || business.licencetypes || 'General Business',
-          business_category: business.business_category || business.licencetypes || undefined,
           address: business.address || 'Calgary, AB',
           community: business.community || business.comdistnm || 'Calgary',
           ward: business.ward || '',
@@ -131,20 +137,19 @@ export const fetchNewBusinesses = async (daysBack = 365) => { // Increased from 
 };
 
 // Enhanced mock data with more realistic Calgary businesses
-const getMockBusinesses = () => [
+const getMockBusinesses = (): Business[] => [
   {
     id: 'BL-2025-001',
     business_name: 'Rustic Roots Cafe',
     trade_name: 'Rustic Roots',
     business_type: 'Restaurant',
-    business_category: 'Food Service',
     address: '1234 17 Ave SW',
     community: 'Hillhurst',
     ward: '7',
     first_iss_dt: '2025-01-15T00:00:00',
     status: 'Issued',
     phone: '(403) 555-0123',
-    website: null,
+    website: undefined,
     featured: true,
     days_old: 22
   },
@@ -153,13 +158,12 @@ const getMockBusinesses = () => [
     business_name: 'TechHub Coworking',
     trade_name: 'TechHub',
     business_type: 'Office Space',
-    business_category: 'Business Services',
     address: '567 8 Ave SW',
     community: 'Beltline',
     ward: '8',
     first_iss_dt: '2025-01-20T00:00:00',
     status: 'Issued',
-    phone: null,
+    phone: undefined,
     website: 'https://techhub.com',
     featured: false,
     days_old: 17
@@ -169,14 +173,13 @@ const getMockBusinesses = () => [
     business_name: 'Bloom & Blossom Florist',
     trade_name: 'Bloom & Blossom',
     business_type: 'Retail',
-    business_category: 'Retail Trade',
     address: '890 Kensington Rd NW',
     community: 'Kensington',
     ward: '7',
     first_iss_dt: '2025-01-25T00:00:00',
     status: 'Issued',
     phone: '(403) 555-0456',
-    website: null,
+    website: undefined,
     featured: false,
     days_old: 12
   },
@@ -185,7 +188,6 @@ const getMockBusinesses = () => [
     business_name: 'Urban Fitness Studio',
     trade_name: 'Urban Fitness',
     business_type: 'Health & Wellness',
-    business_category: 'Health Care',
     address: '321 Mission Rd SW',
     community: 'Mission',
     ward: '8',
@@ -201,14 +203,13 @@ const getMockBusinesses = () => [
     business_name: 'Marda Loop Auto Repair',
     trade_name: 'Marda Loop Auto',
     business_type: 'Automotive',
-    business_category: 'Automotive Services',
     address: '5678 33 Avenue SW',
     community: 'Marda Loop',
     ward: '8',
     first_iss_dt: '2025-02-05T00:00:00',
     status: 'Issued',
     phone: '(403) 555-0321',
-    website: null,
+    website: undefined,
     featured: false,
     days_old: 1
   },
@@ -217,7 +218,6 @@ const getMockBusinesses = () => [
     business_name: 'Inglewood Artisan Bakery',
     trade_name: 'Fresh Start Bakery',
     business_type: 'Food Service',
-    business_category: 'Food Service',
     address: '9101 9 Avenue SE',
     community: 'Inglewood',
     ward: '9',
@@ -233,7 +233,6 @@ const getMockBusinesses = () => [
     business_name: 'Bridgeland Brewery',
     trade_name: 'Bridgeland Brew',
     business_type: 'Brewery',
-    business_category: 'Food Service',
     address: '1234 1 Ave NE',
     community: 'Bridgeland',
     ward: '7',
@@ -249,14 +248,13 @@ const getMockBusinesses = () => [
     business_name: 'Chinatown Noodle House',
     trade_name: 'Chinatown Noodles',
     business_type: 'Restaurant',
-    business_category: 'Food Service',
     address: '567 Centre St NE',
     community: 'Chinatown',
     ward: '7',
     first_iss_dt: '2024-12-20T00:00:00',
     status: 'Issued',
     phone: '(403) 555-0432',
-    website: null,
+    website: undefined,
     featured: false,
     days_old: 18
   },
@@ -265,7 +263,6 @@ const getMockBusinesses = () => [
     business_name: 'East Village Coffee Co.',
     trade_name: 'EV Coffee',
     business_type: 'Coffee Shop',
-    business_category: 'Food Service',
     address: '890 Riverfront Ave SE',
     community: 'East Village',
     ward: '7',
@@ -281,7 +278,6 @@ const getMockBusinesses = () => [
     business_name: 'Mount Royal Yoga Studio',
     trade_name: 'MR Yoga',
     business_type: 'Health & Wellness',
-    business_category: 'Health Care',
     address: '432 17 Ave SW',
     community: 'Mount Royal',
     ward: '8',
@@ -297,7 +293,6 @@ const getMockBusinesses = () => [
     business_name: 'Sunalta Design Studio',
     trade_name: 'Sunalta Design',
     business_type: 'Design Services',
-    business_category: 'Professional Services',
     address: '765 10 Ave SW',
     community: 'Sunalta',
     ward: '8',
