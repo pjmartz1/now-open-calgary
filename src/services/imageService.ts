@@ -14,6 +14,10 @@ const BUSINESS_IMAGES: Record<string, BusinessImage> = {
     url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop&crop=center',
     alt: 'Restaurant interior with warm lighting'
   },
+  'Food Service': {
+    url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop&crop=center',
+    alt: 'Professional kitchen with chef preparing food'
+  },
   'Food Services': {
     url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop&crop=center',
     alt: 'Professional kitchen with chef preparing food'
@@ -51,6 +55,10 @@ const BUSINESS_IMAGES: Record<string, BusinessImage> = {
   'Personal Services': {
     url: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&crop=center',
     alt: 'Professional personal services'
+  },
+  'Health & Wellness': {
+    url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center',
+    alt: 'Modern fitness and wellness center'
   },
   'Beauty Salon': {
     url: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&crop=center',
