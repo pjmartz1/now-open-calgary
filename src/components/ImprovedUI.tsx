@@ -1,5 +1,5 @@
 
-import { Search, MapPin, Calendar, Filter, Star, ExternalLink, Clock, Building2, Zap, TrendingUp, Eye, Users } from 'lucide-react';
+import { Search, MapPin, Calendar, Filter, Star, ExternalLink, Building2, Zap, TrendingUp, Eye, Users } from 'lucide-react';
 import { Business } from '../types/Business';
 
 // Improved Hero Section with better visual hierarchy
@@ -87,10 +87,10 @@ export const EnhancedBusinessCard: React.FC<EnhancedBusinessCardProps> = ({ busi
       }`}
       onClick={onClick}
     >
-      <div className="p-8">
+      <div className="p-6">
         {/* Featured Badge */}
         {business.featured && (
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-2 mb-4">
             <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
               <Star className="h-4 w-4 fill-current" />
               FEATURED
@@ -99,11 +99,11 @@ export const EnhancedBusinessCard: React.FC<EnhancedBusinessCardProps> = ({ busi
         )}
         
         {/* Business Name & Status */}
-        <div className="flex justify-between items-start mb-6">
-          <h3 className="text-xl font-bold text-gray-900 line-clamp-2 flex-1 mr-4 group-hover:text-red-600 transition-colors">
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors mb-2 break-words leading-tight">
             {business.business_name}
           </h3>
-          <span className={`text-xs px-3 py-1 rounded-full font-bold flex-shrink-0 ${daysLabel.color} ${
+          <span className={`inline-block text-xs px-3 py-1 rounded-full font-bold ${daysLabel.color} ${
             daysLabel.pulse ? 'animate-pulse' : ''
           }`}>
             {daysLabel.label}
@@ -111,7 +111,7 @@ export const EnhancedBusinessCard: React.FC<EnhancedBusinessCardProps> = ({ busi
         </div>
 
         {/* Business Details with Icons */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-3 mb-6">
           <div className="flex items-center text-gray-700 text-sm font-medium">
             <Building2 className="h-5 w-5 mr-3 text-blue-500 flex-shrink-0" />
             <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-md text-xs font-semibold">
@@ -131,14 +131,14 @@ export const EnhancedBusinessCard: React.FC<EnhancedBusinessCardProps> = ({ busi
         </div>
 
         {/* Action Bar - Enhanced for Mobile */}
-        <div className="pt-6 border-t border-gray-100">
+        <div className="pt-4 border-t border-gray-100">
           {/* Mobile Action Buttons */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex flex-col sm:flex-row gap-2">
               {business.phone && (
                 <a 
                   href={`tel:${business.phone}`} 
-                  className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm whitespace-nowrap"
+                  className="flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm whitespace-nowrap"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +152,7 @@ export const EnhancedBusinessCard: React.FC<EnhancedBusinessCardProps> = ({ busi
                   href={business.website} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm whitespace-nowrap"
+                  className="flex items-center justify-center gap-2 bg-green-600 text-white px-3 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm whitespace-nowrap"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -169,7 +169,7 @@ export const EnhancedBusinessCard: React.FC<EnhancedBusinessCardProps> = ({ busi
           </div>
           
           {/* Swipeable Card Indicator for Mobile */}
-          <div className="mt-4 flex justify-center lg:hidden">
+          <div className="mt-3 flex justify-center lg:hidden">
             <div className="flex space-x-1">
               <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
               <div className="w-2 h-2 bg-gray-300 rounded-full"></div>

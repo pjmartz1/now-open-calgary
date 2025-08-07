@@ -2,10 +2,31 @@ import { useState } from 'react';
 import { X, Building2, Phone, Globe, Mail, User, MapPin } from 'lucide-react';
 import { Business } from '../types/Business';
 
+interface ClaimFormData {
+  ownerName: string;
+  email: string;
+  phone: string;
+  website: string;
+  description: string;
+  verificationMethod: 'phone' | 'email';
+  agreeToTerms: boolean;
+}
+
+interface ClaimData {
+  businessId: string;
+  ownerName: string;
+  email: string;
+  phone: string;
+  website: string;
+  description: string;
+  verificationMethod: 'phone' | 'email';
+  submittedAt: string;
+}
+
 interface ClaimBusinessModalProps {
   business: Business;
   onClose: () => void;
-  onSubmit: (claimData: any) => void;
+  onSubmit: (claimData: ClaimData) => void;
 }
 
 export const ClaimBusinessModal: React.FC<ClaimBusinessModalProps> = ({
@@ -13,7 +34,7 @@ export const ClaimBusinessModal: React.FC<ClaimBusinessModalProps> = ({
   onClose,
   onSubmit
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ClaimFormData>({
     ownerName: '',
     email: '',
     phone: '',
@@ -42,14 +63,14 @@ export const ClaimBusinessModal: React.FC<ClaimBusinessModalProps> = ({
       });
       alert('Claim submitted successfully! We\'ll review your request within 24 hours.');
       onClose();
-    } catch (error) {
+    } catch {
       alert('Failed to submit claim. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const updateFormData = (field: string, value: any) => {
+  const updateFormData = (field: keyof ClaimFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -195,7 +216,7 @@ export const ClaimBusinessModal: React.FC<ClaimBusinessModalProps> = ({
                     name="verification"
                     value="phone"
                     checked={formData.verificationMethod === 'phone'}
-                    onChange={(e) => updateFormData('verificationMethod', e.target.value)}
+                    onChange={(e) => updateFormData('verificationMethod', e.target.value as ClaimFormData['verificationMethod'])}
                     className="text-red-600 focus:ring-red-500"
                   />
                   <span className="ml-2 text-sm text-gray-700">Phone verification (recommended)</span>
@@ -206,7 +227,7 @@ export const ClaimBusinessModal: React.FC<ClaimBusinessModalProps> = ({
                     name="verification"
                     value="email"
                     checked={formData.verificationMethod === 'email'}
-                    onChange={(e) => updateFormData('verificationMethod', e.target.value)}
+                    onChange={(e) => updateFormData('verificationMethod', e.target.value as ClaimFormData['verificationMethod'])}
                     className="text-red-600 focus:ring-red-500"
                   />
                   <span className="ml-2 text-sm text-gray-700">Email verification</span>

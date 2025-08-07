@@ -2,12 +2,20 @@ import { useEffect, useState } from 'react';
 import { CheckCircle, ArrowRight, Star } from 'lucide-react';
 import { verifyPayment } from '../services/stripeService';
 
+interface PaymentData {
+  success: boolean;
+  featureType: string;
+  duration: number;
+  customerEmail?: string;
+  businessId?: string;
+}
+
 interface PaymentSuccessProps {
   onContinue: () => void;
 }
 
 export const PaymentSuccess: React.FC<PaymentSuccessProps> = ({ onContinue }) => {
-  const [paymentData, setPaymentData] = useState<any>(null);
+  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

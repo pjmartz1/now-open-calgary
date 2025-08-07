@@ -11,12 +11,11 @@ interface FeatureListingModalProps {
 
 export const FeatureListingModal: React.FC<FeatureListingModalProps> = ({
   business,
-  onClose,
-  onSuccess
+  onClose
 }) => {
   const [selectedOption, setSelectedOption] = useState('premium');
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<'select' | 'payment' | 'success'>('select');
+  const [step] = useState<'select' | 'payment' | 'success'>('select');
 
   const handlePurchase = async () => {
     const option = FEATURE_LISTING_OPTIONS.find(opt => opt.id === selectedOption);

@@ -1,5 +1,5 @@
 
-import { MapPin, Users, TrendingUp, Shield, Heart, Award } from 'lucide-react';
+import { MapPin, Users, TrendingUp, Shield, Heart, Award, Twitter } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   return (
@@ -164,10 +164,13 @@ export const AboutPage: React.FC = () => {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a 
-            href="#" 
-            className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg font-medium transition-colors text-sm"
+            href="https://twitter.com/now_open_Canada" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg font-medium transition-colors text-sm flex items-center justify-center space-x-2"
           >
-            Follow on Twitter
+            <Twitter className="w-4 h-4" />
+            <span>Follow @now_open_Canada</span>
           </a>
         </div>
       </div>

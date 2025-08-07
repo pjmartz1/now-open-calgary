@@ -1,5 +1,23 @@
 import { Business } from '../types/Business';
 
+interface CalgaryAPIBusiness {
+  licence_number?: string;
+  getbusid?: string;
+  business_name?: string;
+  tradename?: string;
+  trade_name?: string;
+  business_type?: string;
+  licencetypes?: string;
+  business_category?: string;
+  address?: string;
+  community?: string;
+  comdistnm?: string;
+  ward?: string;
+  first_iss_dt?: string;
+  status?: string;
+  phone_number?: string;
+}
+
 // services/calgaryAPI.ts - IMPROVED VERSION
 const CALGARY_API_BASE = 'https://data.calgary.ca/resource/vdjc-pybd.json';
 
@@ -61,9 +79,9 @@ export const fetchNewBusinesses = async (daysBack = 365) => { // Increased from 
     console.log('✅ Calgary API Success:', data.length, 'businesses found');
     
     // Transform the data with better error handling
-    const transformedData: any[] = [];
+    const transformedData: Business[] = [];
     
-    data.forEach((business: any, index: number) => {
+    data.forEach((business: CalgaryAPIBusiness, index: number) => {
       try {
         const firstIssuedDate = business.first_iss_dt ? new Date(business.first_iss_dt) : new Date();
         const daysOld = Math.floor((Date.now() - firstIssuedDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -76,16 +94,16 @@ export const fetchNewBusinesses = async (daysBack = 365) => { // Increased from 
         transformedData.push({
           id: business.licence_number || business.getbusid || `calgary-${Date.now()}-${index}`,
           business_name: business.business_name || business.tradename || 'Unknown Business',
-          trade_name: business.trade_name || business.tradename || null,
+          trade_name: business.trade_name || business.tradename || undefined,
           business_type: business.business_type || business.licencetypes || 'General Business',
-          business_category: business.business_category || business.licencetypes || null,
+          business_category: business.business_category || business.licencetypes || undefined,
           address: business.address || 'Calgary, AB',
           community: business.community || business.comdistnm || 'Calgary',
-          ward: business.ward || null,
+          ward: business.ward || '',
           first_iss_dt: business.first_iss_dt || new Date().toISOString(),
           status: business.status || 'Issued',
-          phone: business.phone_number || null,
-          website: null, // Not usually in the API
+          phone: business.phone_number || undefined,
+          website: undefined, // Not usually in the API
           featured: false, // Will be set based on featured business IDs
           days_old: daysOld
         });

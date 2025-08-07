@@ -4,8 +4,8 @@ import { Search, MapPin } from 'lucide-react';
 interface HeaderProps {
   onSearch: (term: string) => void;
   searchTerm: string;
-  currentPage: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics';
-  onNavigate: (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics') => void;
+  currentPage: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms';
+  onNavigate: (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm, currentPage, onNavigate }) => {

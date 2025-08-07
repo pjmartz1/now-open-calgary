@@ -21,6 +21,13 @@ export interface FeaturedBusiness {
   };
 }
 
+interface ContactInfo {
+  email?: string;
+  phone?: string;
+  website?: string;
+  name?: string;
+}
+
 // Load featured businesses from localStorage
 export const loadFeaturedBusinesses = (): FeaturedBusiness[] => {
   try {
@@ -47,12 +54,12 @@ export const saveFeaturedBusinesses = (featuredBusinesses: FeaturedBusiness[]) =
 };
 
 // Add a new featured business
-export const addFeaturedBusiness = (business: Business, featureType: 'basic' | 'premium' | 'premium_plus', contactInfo?: any) => {
+export const addFeaturedBusiness = (business: Business, featureType: 'basic' | 'premium' | 'premium_plus', contactInfo?: ContactInfo) => {
   const featuredBusinesses = loadFeaturedBusinesses();
   
   // Calculate expiry date based on feature type
   const now = new Date();
-  let expiryDate = new Date();
+  const expiryDate = new Date();
   
   switch (featureType) {
     case 'basic':
@@ -196,3 +203,4 @@ export const getFeaturedBusinessStats = () => {
   console.log('📊 Featured business stats:', stats);
   return stats;
 };
+

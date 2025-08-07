@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 
@@ -10,7 +10,6 @@ import { AboutPage } from './components/AboutPage';
 import { ForBusinessOwnersPage } from './components/ForBusinessOwnersPage';
 import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { TermsOfServicePage } from './components/TermsOfServicePage';
-import { DiagnosticsPage } from './components/DiagnosticsPage';
 import { 
   ImprovedHero, 
   EnhancedBusinessCard, 
@@ -23,6 +22,14 @@ import { getActiveFeaturedBusinessIds, cleanupExpiredFeatures, addFeaturedBusine
 import { Business, FilterState } from './types/Business';
 import { generatePageTitle, generatePageDescription, updatePageMeta } from './utils/seoUtils';
 
+interface ClaimData {
+  businessId: string;
+  ownerName: string;
+  email: string;
+  phone?: string;
+  verificationDocuments?: string[];
+}
+
 function App() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [filteredBusinesses, setFilteredBusinesses] = useState<Business[]>([]);
@@ -30,7 +37,7 @@ function App() {
   const [featureModalBusiness, setFeatureModalBusiness] = useState<Business | null>(null);
   const [claimModalBusiness, setClaimModalBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState<'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics'>('businesses');
+  const [currentPage, setCurrentPage] = useState<'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms'>('businesses');
   const [filters, setFilters] = useState<FilterState>({
     search: '',
     community: '',
@@ -39,8 +46,7 @@ function App() {
   });
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Load featured businesses from storage
-  const [featuredBusinessIds, setFeaturedBusinessIds] = useState<string[]>([]);
+
 
   useEffect(() => {
     loadBusinesses();
@@ -58,9 +64,47 @@ function App() {
     };
   }, []);
 
+  const filterBusinesses = useCallback(() => {
+    let filtered = businesses;
+
+    // Apply search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(business =>
+        business.business_name.toLowerCase().includes(searchLower) ||
+        business.community.toLowerCase().includes(searchLower) ||
+        business.business_type.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Apply community filter
+    if (filters.community) {
+      filtered = filtered.filter(business => business.community === filters.community);
+    }
+
+    // Apply business type filter
+    if (filters.businessType) {
+      filtered = filtered.filter(business => business.business_type === filters.businessType);
+    }
+
+    // Apply date range filter
+    if (filters.dateRange) {
+      const daysAgo = parseInt(filters.dateRange);
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysAgo);
+      
+      filtered = filtered.filter(business => {
+        const businessDate = new Date(business.first_iss_dt);
+        return businessDate >= cutoffDate;
+      });
+    }
+
+    setFilteredBusinesses(filtered);
+  }, [businesses, filters]);
+
   useEffect(() => {
     filterBusinesses();
-  }, [businesses, filters]);
+  }, [filterBusinesses]);
 
   // Update page meta tags when page changes
   useEffect(() => {
@@ -100,52 +144,10 @@ function App() {
     cleanupExpiredFeatures();
     // Load active featured business IDs
     const activeIds = getActiveFeaturedBusinessIds();
-    setFeaturedBusinessIds(activeIds);
     console.log('📊 Loaded', activeIds.length, 'active featured businesses');
   };
 
-  const filterBusinesses = () => {
-    let filtered = [...businesses];
 
-    // Search filter
-    if (filters.search) {
-      filtered = filtered.filter(business =>
-        business.business_name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        business.trade_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        business.business_type.toLowerCase().includes(filters.search.toLowerCase()) ||
-        business.community.toLowerCase().includes(filters.search.toLowerCase())
-      );
-    }
-
-    // Community filter
-    if (filters.community) {
-      filtered = filtered.filter(business => business.community === filters.community);
-    }
-
-    // Business type filter
-    if (filters.businessType) {
-      filtered = filtered.filter(business => business.business_type === filters.businessType);
-    }
-
-    // Date range filter
-    if (filters.dateRange !== '90') {
-      const days = parseInt(filters.dateRange);
-      filtered = filtered.filter(business => business.days_old <= days);
-    }
-
-    // Sort: featured first, then by newest
-    filtered.sort((a, b) => {
-      const aFeatured = featuredBusinessIds.includes(a.id);
-      const bFeatured = featuredBusinessIds.includes(b.id);
-      
-      if (aFeatured && !bFeatured) return -1;
-      if (!aFeatured && bFeatured) return 1;
-      
-      return a.days_old - b.days_old;
-    });
-
-    setFilteredBusinesses(filtered);
-  };
 
 
 
@@ -194,12 +196,12 @@ function App() {
     closeFeatureModal();
   };
 
-  const handleClaimSubmit = (claimData: any) => {
+  const handleClaimSubmit = (claimData: ClaimData) => {
     console.log('Claim submitted:', claimData);
     // In production, this would send to your backend
   };
 
-  const handleNavigation = (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics') => {
+  const handleNavigation = (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms') => {
     setCurrentPage(page);
     // Close any open modals when navigating
     setSelectedBusiness(null);
@@ -213,8 +215,6 @@ function App() {
         return <PrivacyPolicyPage />;
       case 'terms':
         return <TermsOfServicePage />;
-      case 'diagnostics':
-        return <DiagnosticsPage />;
       case 'about':
         return <AboutPage />;
       case 'for-owners':
@@ -276,7 +276,7 @@ function App() {
 
                 {/* Business Grid */}
                 {!loading && filteredBusinesses.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredBusinesses.map((business) => (
                       <EnhancedBusinessCard
                         key={business.id}
