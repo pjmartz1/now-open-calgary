@@ -1,0 +1,189 @@
+import { Metadata } from 'next'
+import { Utensils, MapPin, Calendar } from 'lucide-react'
+import CalgaryBusinessGrid from '@/components/CalgaryBusinessGrid'
+import { BusinessService } from '@/services/businessService'
+import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'New Restaurants in Calgary - Now Open Calgary',
+  description: 'Discover the newest restaurants, cafes, and dining establishments opening in Calgary. Find the latest places to eat in YYC.',
+  keywords: ['Calgary restaurants', 'new restaurants Calgary', 'Calgary dining', 'YYC food', 'Calgary cafes', 'Alberta restaurants'],
+  openGraph: {
+    title: 'New Restaurants in Calgary - Now Open Calgary',
+    description: 'Discover the newest restaurants, cafes, and dining establishments opening in Calgary.',
+    type: 'website',
+    url: 'https://nowopencalgary.ca/restaurants',
+    siteName: 'Now Open Calgary'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'New Restaurants in Calgary - Now Open Calgary',
+    description: 'Discover the newest restaurants, cafes, and dining establishments opening in Calgary.'
+  },
+  alternates: {
+    canonical: 'https://nowopencalgary.ca/restaurants'
+  }
+}
+
+export default async function RestaurantsPage() {
+  const restaurants = await BusinessService.getCalgaryBusinessesByCategory('restaurants', 50)
+
+  // Get some stats
+  const recentCount = restaurants.filter(r => r.isNew).length
+  const communities = [...new Set(restaurants.map(r => r.community).filter(Boolean))].length
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-red-600 via-pink-600 to-rose-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <div className="flex justify-center mb-6">
+              <div className="p-4 bg-white/10 backdrop-blur-sm rounded-full">
+                <Utensils className="w-12 h-12" />
+              </div>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+              New Restaurants in Calgary
+            </h1>
+            <p className="text-xl text-red-100 max-w-3xl mx-auto mb-8">
+              Discover the newest restaurants, cafes, and dining establishments opening their doors in Calgary. From fine dining to casual eats, explore what&apos;s fresh in YYC&apos;s culinary scene.
+            </p>
+            
+            <div className="flex flex-wrap justify-center gap-6 text-red-100">
+              <div className="flex items-center">
+                <Utensils className="w-5 h-5 mr-2" />
+                <span className="font-semibold">{restaurants.length}</span>
+                <span className="ml-1">restaurants found</span>
+              </div>
+              {recentCount > 0 && (
+                <div className="flex items-center">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">{recentCount}</span>
+                  <span className="ml-1">opened this week</span>
+                </div>
+              )}
+              {communities > 0 && (
+                <div className="flex items-center">
+                  <MapPin className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">{communities}</span>
+                  <span className="ml-1">communities</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Links */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link
+              href="/businesses?category=restaurants"
+              className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+            >
+              All Restaurants
+            </Link>
+            <Link
+              href="/retail"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              New Shops
+            </Link>
+            <Link
+              href="/services"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              New Services
+            </Link>
+            <Link
+              href="/businesses"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              All Categories
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Restaurant Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {restaurants.length === 0 ? (
+          <div className="text-center py-12">
+            <Utensils className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No restaurants found</h3>
+            <p className="text-gray-600 mb-6">
+              We haven&apos;t found any restaurants in our database yet. Check back soon!
+            </p>
+            <Link
+              href="/businesses"
+              className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+            >
+              Browse All Businesses
+            </Link>
+          </div>
+        ) : (
+          <>
+            <CalgaryBusinessGrid 
+              businesses={restaurants}
+              title="Featured Restaurants"
+              subtitle="The latest restaurants and dining experiences opening in Calgary"
+            />
+
+            {/* Call to Action */}
+            <div className="text-center mt-16 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Looking for something specific?
+              </h3>
+              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                Use our advanced search to find restaurants by location, cuisine type, or opening date.
+              </p>
+              <Link
+                href="/businesses?category=restaurants"
+                className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+              >
+                Search All Restaurants
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Schema.org structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "New Restaurants in Calgary",
+            "description": "Discover the newest restaurants, cafes, and dining establishments opening in Calgary.",
+            "url": "https://nowopencalgary.ca/restaurants",
+            "mainEntity": {
+              "@type": "ItemList",
+              "numberOfItems": restaurants.length,
+              "itemListElement": restaurants.slice(0, 10).map((restaurant, index) => ({
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                  "@type": "Restaurant",
+                  "name": restaurant.tradename,
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": restaurant.address,
+                    "addressLocality": "Calgary",
+                    "addressRegion": "AB",
+                    "addressCountry": "CA"
+                  },
+                  "url": `https://nowopencalgary.ca/business/${restaurant.slug}`
+                }
+              }))
+            }
+          })
+        }}
+      />
+    </div>
+  )
+}
