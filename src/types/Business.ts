@@ -19,6 +19,7 @@ export interface Business {
 }
 
 export interface FilterState {
+  search: string;
   community: string;
   businessType: string;
   dateRange: string;

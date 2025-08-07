@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { MapPin, Users, TrendingUp, Shield, Heart, Award } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {

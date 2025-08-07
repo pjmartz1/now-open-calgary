@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, AlertTriangle, Clock, RefreshCw, Activity } from 'lucide-react';
 
 interface DiagnosticTest {

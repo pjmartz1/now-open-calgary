@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Now Open Calgary – Discover New Businesses in Calgary</title>
     <meta name="description" content="Explore Calgary's newest restaurants, shops, and local services with Now Open Calgary. Updated daily from City of Calgary data – see what's new in your neighbourhood today." />
@@ -14,6 +14,8 @@
     <meta property="og:title" content="Now Open Calgary – Discover New Businesses in Calgary" />
     <meta property="og:description" content="Find Calgary's newest restaurants, shops, and services – updated daily from official City of Calgary data." />
     <meta property="og:image" content="/og-image.png" />
+    <meta property="og:site_name" content="Now Open Calgary" />
+    <meta property="og:locale" content="en_CA" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -25,6 +27,10 @@
     <!-- Additional SEO -->
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Now Open Calgary" />
+    <meta name="geo.region" content="CA-AB" />
+    <meta name="geo.placename" content="Calgary" />
+    <meta name="geo.position" content="51.0447;-114.0719" />
+    <meta name="ICBM" content="51.0447, -114.0719" />
     <link rel="canonical" href="https://nowopencalgary.com/" />
     
     <!-- Fix COEP issues for embedded content like Google Maps -->
@@ -42,6 +48,30 @@
         "@type": "SearchAction",
         "target": "https://nowopencalgary.com/?search={search_term_string}",
         "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Now Open Calgary",
+      "url": "https://nowopencalgary.com",
+      "logo": "https://nowopencalgary.com/logo.png",
+      "description": "Your trusted source for discovering new businesses in Calgary",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Calgary",
+        "addressRegion": "AB",
+        "addressCountry": "CA"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Calgary",
+        "addressRegion": "AB",
+        "addressCountry": "CA"
       }
     }
     </script>

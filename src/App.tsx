@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { FilterSidebar } from './components/FilterSidebar';
-import { BusinessCard } from './components/BusinessCard';
+
 import { BusinessModal } from './components/BusinessModal';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { FeatureListingModal } from './components/FeatureListingModal';
@@ -11,9 +10,16 @@ import { AboutPage } from './components/AboutPage';
 import { ForBusinessOwnersPage } from './components/ForBusinessOwnersPage';
 import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { TermsOfServicePage } from './components/TermsOfServicePage';
-import { TestingPage } from './components/TestingPage';
 import { DiagnosticsPage } from './components/DiagnosticsPage';
+import { 
+  ImprovedHero, 
+  EnhancedBusinessCard, 
+  ImprovedFilterSidebar, 
+  ImprovedSearchBar,
+  MobileFilterDrawer
+} from './components/ImprovedUI';
 import { fetchNewBusinesses } from './services/calgaryAPI';
+import { getActiveFeaturedBusinessIds, cleanupExpiredFeatures, addFeaturedBusiness } from './services/featuredBusinessService';
 import { Business, FilterState } from './types/Business';
 import { generatePageTitle, generatePageDescription, updatePageMeta } from './utils/seoUtils';
 
@@ -24,19 +30,21 @@ function App() {
   const [featureModalBusiness, setFeatureModalBusiness] = useState<Business | null>(null);
   const [claimModalBusiness, setClaimModalBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState<'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'testing' | 'diagnostics'>('businesses');
+  const [currentPage, setCurrentPage] = useState<'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics'>('businesses');
   const [filters, setFilters] = useState<FilterState>({
+    search: '',
     community: '',
     businessType: '',
     dateRange: '90'
   });
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Mock featured business IDs (in production, this would come from database)
-  const featuredBusinessIds = ['LIC-2024-001', 'LIC-2024-002', 'LIC-2024-003'];
+  // Load featured businesses from storage
+  const [featuredBusinessIds, setFeaturedBusinessIds] = useState<string[]>([]);
 
   useEffect(() => {
     loadBusinesses();
+    loadFeaturedBusinesses();
     
     // Listen for navigation events from footer
     const handleNavigateEvent = (event: CustomEvent) => {
@@ -52,7 +60,7 @@ function App() {
 
   useEffect(() => {
     filterBusinesses();
-  }, [businesses, searchTerm, filters]);
+  }, [businesses, filters]);
 
   // Update page meta tags when page changes
   useEffect(() => {
@@ -65,11 +73,20 @@ function App() {
     setLoading(true);
     try {
       const data = await fetchNewBusinesses(90);
-      setBusinesses(data);
+      
+      // Mark businesses as featured based on storage
+      const featuredIds = getActiveFeaturedBusinessIds();
+      const businessesWithFeatures = data.map(business => ({
+        ...business,
+        featured: featuredIds.includes(business.id)
+      }));
+      
+      setBusinesses(businessesWithFeatures);
       
       // Log API status for debugging
-      if (data.length > 0) {
-        console.log(`📊 Loaded ${data.length} businesses successfully`);
+      if (businessesWithFeatures.length > 0) {
+        console.log(`📊 Loaded ${businessesWithFeatures.length} businesses successfully`);
+        console.log(`⭐ ${featuredIds.length} businesses are featured`);
       }
     } catch (error) {
       console.error('Failed to load businesses:', error);
@@ -78,16 +95,25 @@ function App() {
     }
   };
 
+  const loadFeaturedBusinesses = () => {
+    // Clean up expired features first
+    cleanupExpiredFeatures();
+    // Load active featured business IDs
+    const activeIds = getActiveFeaturedBusinessIds();
+    setFeaturedBusinessIds(activeIds);
+    console.log('📊 Loaded', activeIds.length, 'active featured businesses');
+  };
+
   const filterBusinesses = () => {
     let filtered = [...businesses];
 
     // Search filter
-    if (searchTerm) {
+    if (filters.search) {
       filtered = filtered.filter(business =>
-        business.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        business.trade_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        business.business_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        business.community.toLowerCase().includes(searchTerm.toLowerCase())
+        business.business_name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        business.trade_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
+        business.business_type.toLowerCase().includes(filters.search.toLowerCase()) ||
+        business.community.toLowerCase().includes(filters.search.toLowerCase())
       );
     }
 
@@ -121,13 +147,9 @@ function App() {
     setFilteredBusinesses(filtered);
   };
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-  };
 
-  const handleFilterChange = (newFilters: FilterState) => {
-    setFilters(newFilters);
-  };
+
+
 
   const openBusinessModal = (business: Business) => {
     setSelectedBusiness(business);
@@ -154,12 +176,21 @@ function App() {
   };
 
   const handleFeatureSuccess = (businessId: string, featureType: string) => {
-    // Update business to be featured
-    setBusinesses(prev => prev.map(business => 
-      business.id === businessId 
-        ? { ...business, featured: true, featureType }
-        : business
-    ));
+    // Add the business to featured businesses storage
+    const business = businesses.find(b => b.id === businessId);
+    if (business) {
+      addFeaturedBusiness(business, featureType as 'basic' | 'premium' | 'premium_plus');
+      
+      // Update the business in the list to show as featured
+      setBusinesses(prev => prev.map(b => 
+        b.id === businessId 
+          ? { ...b, featured: true }
+          : b
+      ));
+      
+      // Reload featured business IDs
+      loadFeaturedBusinesses();
+    }
     closeFeatureModal();
   };
 
@@ -168,7 +199,7 @@ function App() {
     // In production, this would send to your backend
   };
 
-  const handleNavigation = (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'testing' | 'diagnostics') => {
+  const handleNavigation = (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics') => {
     setCurrentPage(page);
     // Close any open modals when navigating
     setSelectedBusiness(null);
@@ -184,8 +215,6 @@ function App() {
         return <TermsOfServicePage />;
       case 'diagnostics':
         return <DiagnosticsPage />;
-      case 'testing':
-        return <TestingPage />;
       case 'about':
         return <AboutPage />;
       case 'for-owners':
@@ -193,75 +222,82 @@ function App() {
       case 'businesses':
       default:
         return (
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar */}
-            <div className="lg:w-80 flex-shrink-0">
-              <FilterSidebar
-                businesses={businesses}
-                filters={filters}
-                onFilterChange={handleFilterChange}
-              />
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1">
-              {/* Results Header */}
-              <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">
-                  Discover New Businesses in Calgary – Updated Daily
-                </h1>
-                <p className="text-lg text-gray-600 mb-4 leading-relaxed">
-                  Welcome to <strong>Now Open Calgary</strong>, your go-to source for discovering the newest businesses across our city. 
-                  Whether you're looking for a fresh dining spot, a unique retail shop, or a local service that just opened, we've got you covered. 
-                  Our listings are updated daily using official City of Calgary data, so you'll always know what's new in your neighbourhood.
-                </p>
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                  New Businesses in Calgary
-                </h2>
-                <p className="text-gray-600">
-                  {loading ? (
-                    'Loading businesses...'
-                  ) : (
-                    `${filteredBusinesses.length} businesses found ${searchTerm ? `for "${searchTerm}"` : ''}`
-                  )}
-                </p>
+          <>
+            {/* Hero Section */}
+            <ImprovedHero />
+            
+            {/* Search Bar */}
+            <ImprovedSearchBar filters={filters} setFilters={setFilters} />
+            
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Mobile Filter Button */}
+              <div className="lg:hidden flex justify-center mb-4">
+                <button
+                  onClick={() => setMobileFilterOpen(true)}
+                  className="flex items-center gap-2 bg-white border-2 border-gray-200 px-6 py-3 rounded-lg font-semibold text-gray-700 hover:border-red-500 hover:text-red-600 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+                  </svg>
+                  Filters ({filteredBusinesses.length} results)
+                </button>
               </div>
 
-              {/* Loading State */}
-              {loading && (
-                <div className="flex justify-center items-center h-64">
-                  <LoadingSpinner />
-                </div>
-              )}
+              {/* Desktop Sidebar */}
+              <div className="hidden lg:block lg:w-80 flex-shrink-0">
+                <ImprovedFilterSidebar
+                  filters={filters}
+                  setFilters={setFilters}
+                  businessCount={filteredBusinesses.length}
+                />
+              </div>
 
-              {/* No Results */}
-              {!loading && filteredBusinesses.length === 0 && (
-                <div className="text-center py-12">
-                  <div className="text-gray-400 mb-4">
-                    <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
+              {/* Main Content */}
+              <div className="flex-1">
+                {/* Loading State */}
+                {loading && (
+                  <div className="flex justify-center items-center h-64">
+                    <LoadingSpinner />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No businesses found</h3>
-                  <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
-                </div>
-              )}
+                )}
 
-              {/* Business Grid */}
-              {!loading && filteredBusinesses.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredBusinesses.map((business) => (
-                    <BusinessCard
-                      key={business.id}
-                      business={business}
-                      isFeatured={featuredBusinessIds.includes(business.id)}
-                      onClick={() => openBusinessModal(business)}
-                    />
-                  ))}
-                </div>
-              )}
+                {/* No Results */}
+                {!loading && filteredBusinesses.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 mb-4">
+                      <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No businesses found</h3>
+                    <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+                  </div>
+                )}
+
+                {/* Business Grid */}
+                {!loading && filteredBusinesses.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {filteredBusinesses.map((business) => (
+                      <EnhancedBusinessCard
+                        key={business.id}
+                        business={business}
+                        onClick={() => openBusinessModal(business)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+
+            {/* Mobile Filter Drawer */}
+            <MobileFilterDrawer
+              isOpen={mobileFilterOpen}
+              onClose={() => setMobileFilterOpen(false)}
+              filters={filters}
+              setFilters={setFilters}
+              businessCount={filteredBusinesses.length}
+            />
+          </>
         );
     }
   };
@@ -269,8 +305,8 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
-        onSearch={handleSearch} 
-        searchTerm={searchTerm}
+        onSearch={() => {}} 
+        searchTerm=""
         currentPage={currentPage}
         onNavigate={handleNavigation}
       />
@@ -285,10 +321,13 @@ function App() {
       {selectedBusiness && (
         <BusinessModal
           business={selectedBusiness}
-          isFeatured={featuredBusinessIds.includes(selectedBusiness.id)}
           onClose={closeBusinessModal}
-          onFeature={() => openFeatureModal(selectedBusiness)}
-          onClaim={() => openClaimModal(selectedBusiness)}
+          onFeature={openFeatureModal}
+          onClaim={openClaimModal}
+          onReport={(business) => {
+            console.log('Report issue for:', business.business_name);
+            // In production, this would open a report form
+          }}
         />
       )}
 

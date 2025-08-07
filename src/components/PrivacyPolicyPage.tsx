@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Shield, Mail, Calendar } from 'lucide-react';
 
 export const PrivacyPolicyPage: React.FC = () => {

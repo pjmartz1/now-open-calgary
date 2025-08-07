@@ -1,183 +1,303 @@
 import { Business } from '../types/Business';
 
+// services/calgaryAPI.ts - IMPROVED VERSION
 const CALGARY_API_BASE = 'https://data.calgary.ca/resource/vdjc-pybd.json';
 
-// Mock data matching Calgary API structure
-const mockBusinesses: Business[] = [
+// Test function - try this first
+export const testCalgaryAPI = async () => {
+  const testUrl = `${CALGARY_API_BASE}?$limit=5`;
+  
+  console.log('🧪 Testing Calgary API with:', testUrl);
+  
+  try {
+    const response = await fetch(testUrl);
+    console.log('✅ Response status:', response.status);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('✅ Calgary API works! Sample data:', data);
+      return data;
+    } else {
+      console.error('❌ API Error:', response.status, response.statusText);
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Network Error:', error);
+    return null;
+  }
+};
+
+// Main function with improved error handling and data processing
+export const fetchNewBusinesses = async (daysBack = 365) => { // Increased from 90 to 365 days
+  console.log('🔄 Starting Calgary API fetch...');
+  
+  try {
+    // First test if API is accessible
+    const testResult = await testCalgaryAPI();
+    if (!testResult) {
+      console.log('🔄 API test failed, using mock data for development');
+      return getMockBusinesses();
+    }
+
+    // Calculate date filter (go back X days)
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - daysBack);
+    
+    // Calgary API expects this exact format: YYYY-MM-DDTHH:mm:ss
+    const dateString = cutoffDate.toISOString().slice(0, 19); // Remove milliseconds
+    
+    // Build URL with proper encoding - increased limit to 2000 for more data
+    const apiUrl = `${CALGARY_API_BASE}?$where=first_iss_dt>'${dateString}'&status=Issued&$limit=2000&$order=first_iss_dt DESC`;
+    
+    console.log('🌐 Calgary API URL:', apiUrl);
+    
+    const response = await fetch(apiUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Calgary API Error: ${response.status} - ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('✅ Calgary API Success:', data.length, 'businesses found');
+    
+    // Transform the data with better error handling
+    const transformedData: any[] = [];
+    
+    data.forEach((business: any, index: number) => {
+      try {
+        const firstIssuedDate = business.first_iss_dt ? new Date(business.first_iss_dt) : new Date();
+        const daysOld = Math.floor((Date.now() - firstIssuedDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Skip businesses older than 2 years to keep content fresh
+        if (daysOld > 730) {
+          return;
+        }
+        
+        transformedData.push({
+          id: business.licence_number || business.getbusid || `calgary-${Date.now()}-${index}`,
+          business_name: business.business_name || business.tradename || 'Unknown Business',
+          trade_name: business.trade_name || business.tradename || null,
+          business_type: business.business_type || business.licencetypes || 'General Business',
+          business_category: business.business_category || business.licencetypes || null,
+          address: business.address || 'Calgary, AB',
+          community: business.community || business.comdistnm || 'Calgary',
+          ward: business.ward || null,
+          first_iss_dt: business.first_iss_dt || new Date().toISOString(),
+          status: business.status || 'Issued',
+          phone: business.phone_number || null,
+          website: null, // Not usually in the API
+          featured: false, // Will be set based on featured business IDs
+          days_old: daysOld
+        });
+      } catch (error) {
+        console.warn('⚠️ Error processing business:', business, error);
+      }
+    });
+    
+    console.log('✅ Successfully processed', transformedData.length, 'businesses');
+    
+    // If we don't have enough real data, supplement with mock data
+    if (transformedData.length < 10) {
+      console.log('🔄 Supplementing with mock data for better user experience');
+      const mockData = getMockBusinesses();
+      return [...transformedData, ...mockData];
+    }
+    
+    return transformedData;
+    
+  } catch (error) {
+    console.error('❌ Calgary API Error:', error);
+    console.log('🔄 Falling back to mock data...');
+    return getMockBusinesses();
+  }
+};
+
+// Enhanced mock data with more realistic Calgary businesses
+const getMockBusinesses = () => [
   {
-    id: 'LIC-2024-001',
-    business_name: 'Kensington Coffee Roasters',
-    trade_name: 'KCR Coffee',
-    business_type: 'Food Service',
-    address: '1234 Kensington Road NW',
-    community: 'Kensington-Chinatown',
+    id: 'BL-2025-001',
+    business_name: 'Rustic Roots Cafe',
+    trade_name: 'Rustic Roots',
+    business_type: 'Restaurant',
+    business_category: 'Food Service',
+    address: '1234 17 Ave SW',
+    community: 'Hillhurst',
     ward: '7',
-    first_iss_dt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    first_iss_dt: '2025-01-15T00:00:00',
     status: 'Issued',
-    days_old: 2,
     phone: '(403) 555-0123',
-    website: 'https://kensingtoncoffee.ca'
+    website: null,
+    featured: true,
+    days_old: 22
   },
   {
-    id: 'LIC-2024-002',
-    business_name: 'Marda Loop Fitness Studio',
+    id: 'BL-2025-002',
+    business_name: 'TechHub Coworking',
+    trade_name: 'TechHub',
+    business_type: 'Office Space',
+    business_category: 'Business Services',
+    address: '567 8 Ave SW',
+    community: 'Beltline',
+    ward: '8',
+    first_iss_dt: '2025-01-20T00:00:00',
+    status: 'Issued',
+    phone: null,
+    website: 'https://techhub.com',
+    featured: false,
+    days_old: 17
+  },
+  {
+    id: 'BL-2025-003',
+    business_name: 'Bloom & Blossom Florist',
+    trade_name: 'Bloom & Blossom',
+    business_type: 'Retail',
+    business_category: 'Retail Trade',
+    address: '890 Kensington Rd NW',
+    community: 'Kensington',
+    ward: '7',
+    first_iss_dt: '2025-01-25T00:00:00',
+    status: 'Issued',
+    phone: '(403) 555-0456',
+    website: null,
+    featured: false,
+    days_old: 12
+  },
+  {
+    id: 'BL-2025-004',
+    business_name: 'Urban Fitness Studio',
+    trade_name: 'Urban Fitness',
     business_type: 'Health & Wellness',
+    business_category: 'Health Care',
+    address: '321 Mission Rd SW',
+    community: 'Mission',
+    ward: '8',
+    first_iss_dt: '2025-02-01T00:00:00',
+    status: 'Issued',
+    phone: '(403) 555-0789',
+    website: 'https://urbanfitness.com',
+    featured: true,
+    days_old: 5
+  },
+  {
+    id: 'BL-2025-005',
+    business_name: 'Marda Loop Auto Repair',
+    trade_name: 'Marda Loop Auto',
+    business_type: 'Automotive',
+    business_category: 'Automotive Services',
     address: '5678 33 Avenue SW',
     community: 'Marda Loop',
     ward: '8',
-    first_iss_dt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    first_iss_dt: '2025-02-05T00:00:00',
     status: 'Issued',
-    days_old: 5,
-    phone: '(403) 555-0456'
+    phone: '(403) 555-0321',
+    website: null,
+    featured: false,
+    days_old: 1
   },
   {
-    id: 'LIC-2024-003',
+    id: 'BL-2025-006',
     business_name: 'Inglewood Artisan Bakery',
     trade_name: 'Fresh Start Bakery',
     business_type: 'Food Service',
+    business_category: 'Food Service',
     address: '9101 9 Avenue SE',
     community: 'Inglewood',
     ward: '9',
-    first_iss_dt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    first_iss_dt: '2025-02-03T00:00:00',
     status: 'Issued',
-    days_old: 1,
-    website: 'https://freshstartbakery.com'
-  },
-  {
-    id: 'LIC-2024-004',
-    business_name: 'Mission Tech Solutions',
-    business_type: 'Professional Services',
-    address: '2468 4 Street SW',
-    community: 'Mission',
-    ward: '8',
-    first_iss_dt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-    status: 'Issued',
-    days_old: 10,
-    phone: '(403) 555-0789',
-    website: 'https://missiontech.ca'
-  },
-  {
-    id: 'LIC-2024-005',
-    business_name: 'Bridgeland Pet Grooming',
-    business_type: 'Personal Services',
-    address: '1357 1 Avenue NE',
-    community: 'Bridgeland-Riverside',
-    ward: '9',
-    first_iss_dt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    status: 'Issued',
-    days_old: 7,
-    phone: '(403) 555-0321'
-  },
-  {
-    id: 'LIC-2024-006',
-    business_name: 'Hillhurst Vintage Boutique',
-    business_type: 'Retail',
-    address: '2460 Kensington Road NW',
-    community: 'Hillhurst-Sunnyside',
-    ward: '7',
-    first_iss_dt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-    status: 'Issued',
-    days_old: 15,
-    website: 'https://hillhurstvintage.com'
-  },
-  {
-    id: 'LIC-2024-007',
-    business_name: 'Eau Claire Consulting Group',
-    business_type: 'Professional Services',
-    address: '135 2 Avenue SW',
-    community: 'Eau Claire',
-    ward: '8',
-    first_iss_dt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-    status: 'Issued',
-    days_old: 20,
     phone: '(403) 555-0654',
-    website: 'https://eauclaireconsulting.ca'
+    website: 'https://freshstartbakery.com',
+    featured: false,
+    days_old: 3
   },
   {
-    id: 'LIC-2024-008',
-    business_name: 'Ramsay Auto Repair',
-    business_type: 'Automotive',
-    address: '2468 11 Street SE',
-    community: 'Ramsay',
-    ward: '9',
-    first_iss_dt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    id: 'BL-2024-001',
+    business_name: 'Bridgeland Brewery',
+    trade_name: 'Bridgeland Brew',
+    business_type: 'Brewery',
+    business_category: 'Food Service',
+    address: '1234 1 Ave NE',
+    community: 'Bridgeland',
+    ward: '7',
+    first_iss_dt: '2024-12-15T00:00:00',
     status: 'Issued',
-    days_old: 3,
-    phone: '(403) 555-0987'
+    phone: '(403) 555-0987',
+    website: 'https://bridgelandbrew.com',
+    featured: false,
+    days_old: 23
+  },
+  {
+    id: 'BL-2024-002',
+    business_name: 'Chinatown Noodle House',
+    trade_name: 'Chinatown Noodles',
+    business_type: 'Restaurant',
+    business_category: 'Food Service',
+    address: '567 Centre St NE',
+    community: 'Chinatown',
+    ward: '7',
+    first_iss_dt: '2024-12-20T00:00:00',
+    status: 'Issued',
+    phone: '(403) 555-0432',
+    website: null,
+    featured: false,
+    days_old: 18
+  },
+  {
+    id: 'BL-2024-003',
+    business_name: 'East Village Coffee Co.',
+    trade_name: 'EV Coffee',
+    business_type: 'Coffee Shop',
+    business_category: 'Food Service',
+    address: '890 Riverfront Ave SE',
+    community: 'East Village',
+    ward: '7',
+    first_iss_dt: '2024-12-25T00:00:00',
+    status: 'Issued',
+    phone: '(403) 555-0765',
+    website: 'https://evcoffee.com',
+    featured: false,
+    days_old: 13
+  },
+  {
+    id: 'BL-2024-004',
+    business_name: 'Mount Royal Yoga Studio',
+    trade_name: 'MR Yoga',
+    business_type: 'Health & Wellness',
+    business_category: 'Health Care',
+    address: '432 17 Ave SW',
+    community: 'Mount Royal',
+    ward: '8',
+    first_iss_dt: '2024-12-30T00:00:00',
+    status: 'Issued',
+    phone: '(403) 555-0210',
+    website: 'https://mryoga.com',
+    featured: false,
+    days_old: 8
+  },
+  {
+    id: 'BL-2024-005',
+    business_name: 'Sunalta Design Studio',
+    trade_name: 'Sunalta Design',
+    business_type: 'Design Services',
+    business_category: 'Professional Services',
+    address: '765 10 Ave SW',
+    community: 'Sunalta',
+    ward: '8',
+    first_iss_dt: '2025-01-05T00:00:00',
+    status: 'Issued',
+    phone: '(403) 555-0543',
+    website: 'https://sunalta.com',
+    featured: false,
+    days_old: 2
   }
 ];
 
-export const fetchNewBusinesses = async (daysBack: number = 90): Promise<Business[]> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  console.log('🔍 Attempting to connect to Calgary API...');
-  
-  try {
-    // Try real API first, fallback to mock data on error
-    try {
-      const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - daysBack);
-      const dateFilter = cutoffDate.toISOString().split('.')[0];
-      
-      console.log(`📅 Fetching businesses licensed after: ${dateFilter}`);
-      
-      const params = new URLSearchParams({
-        '$where': `status='Issued' AND first_iss_dt>'${dateFilter}'`,
-        '$limit': '1000',
-        '$order': 'first_iss_dt DESC'
-      });
-      
-      const apiUrl = `${CALGARY_API_BASE}?${params}`;
-      console.log(`🌐 API URL: ${apiUrl}`);
-      
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        console.log(`❌ API Response Error: ${response.status} ${response.statusText}`);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log(`📊 API Response: ${Array.isArray(data) ? data.length : 'Invalid'} records received`);
-      
-      // If we get valid data from the API, process it
-      if (Array.isArray(data) && data.length > 0) {
-        console.log(`✅ SUCCESS: Using ${data.length} businesses from LIVE Calgary API`);
-        
-        return data.map((business: any) => ({
-          id: business.licence_number || `LIC-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          business_name: business.business_name || 'Unknown Business',
-          trade_name: business.trade_name,
-          business_type: business.business_type || 'General Business',
-          address: business.address || 'Address not available',
-          community: business.community || 'Calgary',
-          ward: business.ward || 'Unknown',
-          first_iss_dt: business.first_iss_dt || new Date().toISOString(),
-          status: business.status || 'Issued',
-          days_old: business.first_iss_dt 
-            ? Math.floor((Date.now() - new Date(business.first_iss_dt).getTime()) / (1000 * 60 * 60 * 24))
-            : 0,
-          phone: business.phone,
-          website: business.website
-        }));
-      } else {
-        console.log('⚠️ API returned empty or invalid data');
-        throw new Error('No data received from Calgary API');
-      }
-    } catch (apiError) {
-      console.warn('❌ Calgary API Error:', apiError);
-      console.log('🔄 Falling back to mock data...');
-      
-      // Fallback to mock data with a notice
-      console.log('📝 SUCCESS: Using mock data (8 businesses) for development/demo');
-      return mockBusinesses.filter(business => business.days_old <= daysBack);
-    }
-  } catch (error) {
-    console.error('Critical API Error:', error);
-    console.log('📝 FALLBACK: Using mock data as final fallback');
-    return mockBusinesses.filter(business => business.days_old <= daysBack);
-  }
+// Simple function to use in your React component
+export const loadBusinesses = async () => {
+  console.log('🔄 Loading Calgary businesses...');
+  const businesses = await fetchNewBusinesses();
+  console.log('📊 Loaded', businesses.length, 'businesses');
+  return businesses;
 };
 
 export const getBusinessById = async (id: string): Promise<Business | null> => {

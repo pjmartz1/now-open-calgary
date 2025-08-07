@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Star, Users, TrendingUp, Shield, CheckCircle, ArrowRight, Crown, Zap } from 'lucide-react';
 
 interface ForBusinessOwnersPageProps {

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { FileText, Mail, Calendar } from 'lucide-react';
 
 export const TermsOfServicePage: React.FC = () => {

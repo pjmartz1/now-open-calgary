@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Star, Check, CreditCard, Zap, Crown } from 'lucide-react';
 import { Business } from '../types/Business';
 import { FEATURE_LISTING_OPTIONS, createFeatureListingCheckout, redirectToCheckout } from '../services/stripeService';
@@ -129,11 +129,11 @@ export const FeatureListingModal: React.FC<FeatureListingModalProps> = ({
           {/* Pricing Options */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Choose Your Plan</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
               {FEATURE_LISTING_OPTIONS.map((option) => (
                 <div
                   key={option.id}
-                  className={`relative border-2 rounded-xl p-6 cursor-pointer transition-all ${
+                  className={`relative border-2 rounded-xl p-6 cursor-pointer transition-all flex flex-col ${
                     selectedOption === option.id
                       ? 'border-red-500 bg-red-50'
                       : 'border-gray-200 hover:border-gray-300'
@@ -148,7 +148,7 @@ export const FeatureListingModal: React.FC<FeatureListingModalProps> = ({
                     </div>
                   )}
                   
-                  <div className="text-center mb-4">
+                  <div className="text-center mb-4 flex-shrink-0">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 ${getColorClasses(option.id)}`}>
                       {getIcon(option.id)}
                     </div>
@@ -159,7 +159,7 @@ export const FeatureListingModal: React.FC<FeatureListingModalProps> = ({
                     </div>
                   </div>
 
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 flex-grow mb-6">
                     {option.features.map((feature, index) => (
                       <li key={index} className="flex items-center text-sm text-gray-600">
                         <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
@@ -167,6 +167,23 @@ export const FeatureListingModal: React.FC<FeatureListingModalProps> = ({
                       </li>
                     ))}
                   </ul>
+
+                  {/* Get Started Button - Always at bottom */}
+                  <div className="pt-4 border-t border-gray-100 flex-shrink-0">
+                    <button
+                      className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
+                        selectedOption === option.id
+                          ? 'bg-red-600 text-white hover:bg-red-700'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedOption(option.id);
+                      }}
+                    >
+                      Get Started
+                    </button>
+                  </div>
 
                   {selectedOption === option.id && (
                     <div className="absolute inset-0 border-2 border-red-500 rounded-xl pointer-events-none">
@@ -201,7 +218,7 @@ export const FeatureListingModal: React.FC<FeatureListingModalProps> = ({
               ) : (
                 <>
                   <CreditCard className="w-4 h-4" />
-                  <span>Purchase ${FEATURE_LISTING_OPTIONS.find(opt => opt.id === selectedOption)?.price}</span>
+                  <span>Complete Purchase - ${FEATURE_LISTING_OPTIONS.find(opt => opt.id === selectedOption)?.price}</span>
                 </>
               )}
             </button>

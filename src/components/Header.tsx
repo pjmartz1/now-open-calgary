@@ -1,12 +1,11 @@
-import React from 'react';
+
 import { Search, MapPin } from 'lucide-react';
 
 interface HeaderProps {
   onSearch: (term: string) => void;
   searchTerm: string;
-  currentPage: 'businesses' | 'for-owners' | 'about' | 'testing' | 'diagnostics';
-  currentPage: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'testing' | 'diagnostics';
-  onNavigate: (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'testing' | 'diagnostics') => void;
+  currentPage: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics';
+  onNavigate: (page: 'businesses' | 'for-owners' | 'about' | 'privacy' | 'terms' | 'diagnostics') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm, currentPage, onNavigate }) => {
@@ -61,6 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm, currentPag
             >
               About
             </button>
+
             <button 
               onClick={() => onNavigate('for-owners')}
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"

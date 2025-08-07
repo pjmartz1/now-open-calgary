@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Building2, Phone, Globe, Mail, User, MapPin } from 'lucide-react';
 import { Business } from '../types/Business';
 

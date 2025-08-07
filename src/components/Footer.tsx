@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { MapPin, Heart, ExternalLink } from 'lucide-react';
 
 export const Footer: React.FC = () => {

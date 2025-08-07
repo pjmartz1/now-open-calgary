@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { MapPin, Star, ExternalLink } from 'lucide-react';
 import { Business } from '../types/Business';
 import { getDirectionsUrl } from '../services/googleMapsService';

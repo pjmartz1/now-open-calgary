@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Filter, Calendar, Building2, MapPin } from 'lucide-react';
 import { Business, FilterState } from '../types/Business';
 

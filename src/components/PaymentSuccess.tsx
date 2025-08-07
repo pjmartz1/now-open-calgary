@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircle, ArrowRight, Star } from 'lucide-react';
 import { verifyPayment } from '../services/stripeService';
 
