@@ -1,9 +1,0 @@
-# Handle client-side routing
-/about    /index.html   200
-/for-owners    /index.html   200
-/privacy    /index.html   200
-/terms    /index.html   200
-/diagnostics    /index.html   200
-
-# Catch all other routes
-/*    /index.html   200
