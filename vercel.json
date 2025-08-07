@@ -19,6 +19,26 @@
       "dest": "/api/$1"
     },
     {
+      "src": "/about",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/for-owners",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/privacy",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/terms",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/diagnostics",
+      "dest": "/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
