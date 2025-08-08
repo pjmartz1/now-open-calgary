@@ -128,8 +128,7 @@ function BusinessSchema({ business }: { business: CalgaryBusiness }) {
       "streetAddress": business.address,
       "addressLocality": "Calgary",
       "addressRegion": "AB",
-      "addressCountry": "CA",
-      "postalCode": business.postal_code || undefined
+      "addressCountry": "CA"
     },
     "geo": business.latitude && business.longitude ? {
       "@type": "GeoCoordinates",
