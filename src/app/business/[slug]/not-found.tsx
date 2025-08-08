@@ -40,7 +40,7 @@ export default function NotFound() {
             Business Not Found
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            The business you're looking for might have been removed, had its name changed, 
+            The business you&apos;re looking for might have been removed, had its name changed, 
             or is temporarily unavailable.
           </p>
 
