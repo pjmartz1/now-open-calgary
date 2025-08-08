@@ -8,11 +8,14 @@ import {
   fetchAllBusinesses
 } from '@/lib/calgary-api'
 
-// Create service role client for admin operations
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+// Create service role client for admin operations - only if env vars available
+let supabaseAdmin: ReturnType<typeof createClient> | null = null
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+if (supabaseUrl && supabaseKey) {
+  supabaseAdmin = createClient(supabaseUrl, supabaseKey)
+}
 import type { CalgaryBusinessInput } from '@/types/business'
 
 // Types for API responses
@@ -40,6 +43,23 @@ interface SyncRequest {
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
+  
+  // Check if Supabase is available
+  if (!supabaseAdmin) {
+    return NextResponse.json({
+      success: false,
+      message: 'Database not available during build time',
+      stats: {
+        fetched: 0,
+        processed: 0,
+        inserted: 0,
+        updated: 0,
+        errors: 0,
+        skipped: 0
+      },
+      duration: Date.now() - startTime
+    } as SyncResult, { status: 503 })
+  }
   
   try {
     // Parse request body
@@ -161,7 +181,8 @@ export async function POST(request: NextRequest) {
             // Insert new business
             const { error: insertError } = await supabaseAdmin
               .from('calgary_businesses')
-              .insert([business])
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .insert([business as any])
 
             if (insertError) {
               // Check if it's a duplicate slug error
@@ -172,7 +193,8 @@ export async function POST(request: NextRequest) {
                 
                 const { error: retryError } = await supabaseAdmin
                   .from('calgary_businesses')
-                  .insert([{ ...business, slug: newSlug }])
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  .insert([{ ...business, slug: newSlug } as any])
                 
                 if (retryError) {
                   throw retryError
@@ -251,6 +273,14 @@ export async function POST(request: NextRequest) {
 
 // GET endpoint for checking sync status or running test sync
 export async function GET(request: NextRequest) {
+  // Check if Supabase is available
+  if (!supabaseAdmin) {
+    return NextResponse.json({
+      success: false,
+      message: 'Database not available during build time'
+    }, { status: 503 })
+  }
+  
   const { searchParams } = new URL(request.url)
   const action = searchParams.get('action')
 

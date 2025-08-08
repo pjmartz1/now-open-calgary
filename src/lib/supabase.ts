@@ -1,10 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 import type { CalgaryBusiness } from '@/types/business'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Only create client if both URL and key are available
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey) 
+  : null
 
 // Database type definitions for Supabase
 export interface Database {
@@ -35,7 +38,9 @@ export interface Database {
 }
 
 // Typed Supabase client
-export const typedSupabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+export const typedSupabase = supabaseUrl && supabaseAnonKey 
+  ? createClient<Database>(supabaseUrl, supabaseAnonKey) 
+  : null
 
 // Database types for TypeScript
 export interface Business {

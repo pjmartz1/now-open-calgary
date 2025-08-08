@@ -30,6 +30,11 @@ export interface BusinessWithRelations extends Business {
 export class BusinessService {
   // Get Calgary businesses for homepage
   static async getCalgaryFeaturedBusinesses(limit: number = 12): Promise<BusinessCardData[]> {
+    if (!typedSupabase) {
+      console.warn('Supabase client not available')
+      return []
+    }
+    
     const { data, error } = await typedSupabase
       .from('calgary_businesses')
       .select('*')
@@ -63,6 +68,11 @@ export class BusinessService {
     businesses: BusinessCardData[]
     total: number
   }> {
+    if (!typedSupabase) {
+      console.warn('Supabase client not available')
+      return { businesses: [], total: 0 }
+    }
+    
     let query = typedSupabase
       .from('calgary_businesses')
       .select('*', { count: 'exact' })
@@ -115,6 +125,11 @@ export class BusinessService {
     category: string, 
     limit: number = 20
   ): Promise<BusinessCardData[]> {
+    if (!typedSupabase) {
+      console.warn('Supabase client not available')
+      return []
+    }
+    
     const { data, error } = await typedSupabase
       .from('calgary_businesses')
       .select('*')
@@ -140,6 +155,11 @@ export class BusinessService {
 
   // Get single Calgary business by slug
   static async getCalgaryBusinessBySlug(slug: string): Promise<CalgaryBusiness | null> {
+    if (!typedSupabase) {
+      console.warn('Supabase client not available')
+      return null
+    }
+    
     const { data, error } = await typedSupabase
       .from('calgary_businesses')
       .select('*')
@@ -165,6 +185,11 @@ export class BusinessService {
 
   // Get unique Calgary categories for filtering
   static async getCalgaryCategories(): Promise<string[]> {
+    if (!typedSupabase) {
+      console.warn('Supabase client not available')
+      return []
+    }
+    
     const { data, error } = await typedSupabase
       .from('calgary_businesses')
       .select('category')
@@ -183,6 +208,11 @@ export class BusinessService {
 
   // Get unique Calgary communities for filtering
   static async getCalgaryCommunities(): Promise<string[]> {
+    if (!typedSupabase) {
+      console.warn('Supabase client not available')
+      return []
+    }
+    
     const { data, error } = await typedSupabase
       .from('calgary_businesses')
       .select('community')
@@ -212,6 +242,16 @@ export class BusinessService {
         }))
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -255,6 +295,16 @@ export class BusinessService {
           }))
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -299,6 +349,11 @@ export class BusinessService {
         }
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return null
+      }
+      
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -344,6 +399,11 @@ export class BusinessService {
           }))
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -388,6 +448,11 @@ export class BusinessService {
           }))
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -438,6 +503,11 @@ export class BusinessService {
           }))
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
       const { data, error } = await supabase
         .from('businesses')
         .select(`
@@ -482,6 +552,11 @@ export class BusinessService {
         }))
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
       const { data, error } = await supabase
         .from('categories')
         .select('*')
@@ -510,6 +585,11 @@ export class BusinessService {
         }))
       }
 
+      if (!supabase) {
+        console.warn('Supabase client not available')
+        return []
+      }
+      
       const { data, error } = await supabase
         .from('neighborhoods')
         .select('*')
