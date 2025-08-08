@@ -8,8 +8,8 @@ export const metadata: Metadata = {
     default: "Now Open Calgary - Discover New Businesses in Calgary",
     template: "%s | Now Open Calgary"
   },
-  description: "Discover the newest businesses opening their doors in Calgary. From trendy cafes to innovative startups, find what's fresh in your city.",
-  keywords: ["Calgary", "new businesses", "restaurants", "retail", "services", "local business", "Calgary business directory"],
+  description: "Discover what's new in Calgary! Find the newest businesses, restaurants, shops and services opening their doors. Your complete Calgary business directory for fresh openings.",
+  keywords: ["new in calgary", "new businesses calgary", "calgary business directory", "newest restaurants calgary", "new shops calgary", "new services calgary", "what's new calgary", "calgary openings"],
   authors: [{ name: "Now Open Calgary" }],
   creator: "Now Open Calgary",
   publisher: "Now Open Calgary",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Now Open Calgary - Discover New Businesses in Calgary",
-    description: "Discover the newest businesses opening their doors in Calgary. From trendy cafes to innovative startups, find what's fresh in your city.",
+    description: "Discover what's new in Calgary! Find the newest businesses, restaurants, shops and services opening their doors. Your complete Calgary business directory for fresh openings.",
     url: 'https://nowopencalgary.ca',
     siteName: 'Now Open Calgary',
     images: [
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Now Open Calgary - Discover New Businesses in Calgary",
-    description: "Discover the newest businesses opening their doors in Calgary. From trendy cafes to innovative startups, find what's fresh in your city.",
+    description: "Discover what's new in Calgary! Find the newest businesses, restaurants, shops and services opening their doors. Your complete Calgary business directory for fresh openings.",
     images: ['/og-image.svg'],
   },
   robots: {
@@ -60,12 +60,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico?v=2' },
-      { url: '/favicon.svg?v=2', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
     ],
     apple: [
-      { url: '/favicon.svg?v=2' },
+      { url: '/favicon.svg', sizes: '180x180' },
     ],
+    shortcut: '/favicon.ico',
   },
   manifest: '/site.webmanifest',
 };
@@ -78,9 +79,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
-        <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon.svg?v=2" />
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon.svg" sizes="180x180" />
         <link rel="manifest" href="/site.webmanifest" />
         
         {/* Google Analytics */}

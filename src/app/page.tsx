@@ -183,6 +183,41 @@ export default async function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Schema.org Organization structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Now Open Calgary",
+            "url": "https://nowopencalgary.ca",
+            "logo": "https://nowopencalgary.ca/logo.svg",
+            "description": "Discover what's new in Calgary! Find the newest businesses, restaurants, shops and services opening their doors. Your complete Calgary business directory for fresh openings.",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Calgary",
+              "addressRegion": "AB",
+              "addressCountry": "CA"
+            },
+            "areaServed": {
+              "@type": "City",
+              "name": "Calgary",
+              "addressRegion": "AB",
+              "addressCountry": "CA"
+            },
+            "sameAs": [
+              "https://nowopencalgary.ca"
+            ],
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://nowopencalgary.ca/businesses?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          })
+        }}
+      />
     </div>
   );
 }

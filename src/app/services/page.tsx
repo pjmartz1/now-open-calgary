@@ -5,20 +5,20 @@ import { BusinessService } from '@/services/businessService'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'New Services in Calgary - Now Open Calgary',
-  description: 'Discover the newest service providers opening in Calgary. Find professional services, personal care, and specialized services in YYC.',
-  keywords: ['Calgary services', 'new services Calgary', 'Calgary professionals', 'YYC services', 'Calgary business services', 'Alberta services'],
+  title: 'New Services Calgary 2024 | Latest Professional Services | Now Open Calgary',
+  description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC. Updated daily with the newest Calgary services.',
+  keywords: ['new services calgary', 'newest services calgary 2024', 'calgary professional services', 'new consultants calgary', 'latest services calgary', 'calgary service openings', 'YYC new services', 'fresh services calgary'],
   openGraph: {
-    title: 'New Services in Calgary - Now Open Calgary',
-    description: 'Discover the newest service providers opening in Calgary.',
+    title: 'New Services Calgary 2024 | Latest Professional Services',
+    description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC.',
     type: 'website',
     url: 'https://nowopencalgary.ca/services',
     siteName: 'Now Open Calgary'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'New Services in Calgary - Now Open Calgary',
-    description: 'Discover the newest service providers opening in Calgary.'
+    title: 'New Services Calgary 2024 | Latest Professional Services',
+    description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC.'
   },
   alternates: {
     canonical: 'https://nowopencalgary.ca/services'

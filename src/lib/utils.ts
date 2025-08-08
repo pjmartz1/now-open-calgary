@@ -26,8 +26,29 @@ export function formatPhone(phone: string) {
 export function generateSlug(text: string) {
   return text
     .toLowerCase()
+    .trim()
+    // Replace special characters and accents
+    .replace(/[àáäâèéëêìíïîòóöôùúüûñç]/g, char => {
+      const map: Record<string, string> = {
+        'à': 'a', 'á': 'a', 'ä': 'a', 'â': 'a',
+        'è': 'e', 'é': 'e', 'ë': 'e', 'ê': 'e',
+        'ì': 'i', 'í': 'i', 'ï': 'i', 'î': 'i',
+        'ò': 'o', 'ó': 'o', 'ö': 'o', 'ô': 'o',
+        'ù': 'u', 'ú': 'u', 'ü': 'u', 'û': 'u',
+        'ñ': 'n', 'ç': 'c'
+      }
+      return map[char] || char
+    })
+    // Replace & with 'and'
+    .replace(/&/g, 'and')
+    // Replace multiple spaces/special chars with single dash
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
+    // Remove leading/trailing dashes
+    .replace(/^-+|-+$/g, '')
+    // Limit length to 60 characters for SEO
+    .slice(0, 60)
+    // Remove trailing dash if trimmed
+    .replace(/-$/g, '')
 }
 
 export function truncateText(text: string, maxLength: number) {

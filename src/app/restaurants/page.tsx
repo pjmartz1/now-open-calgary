@@ -5,20 +5,20 @@ import { BusinessService } from '@/services/businessService'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'New Restaurants in Calgary - Now Open Calgary',
-  description: 'Discover the newest restaurants, cafes, and dining establishments opening in Calgary. Find the latest places to eat in YYC.',
-  keywords: ['Calgary restaurants', 'new restaurants Calgary', 'Calgary dining', 'YYC food', 'Calgary cafes', 'Alberta restaurants'],
+  title: 'New Restaurants Calgary 2024 | Latest Calgary Dining | Now Open Calgary',
+  description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC. Updated daily with the newest Calgary restaurants.',
+  keywords: ['new restaurants calgary', 'newest restaurants calgary 2024', 'calgary dining', 'new cafes calgary', 'latest restaurants calgary', 'calgary restaurant openings', 'YYC new restaurants', 'fresh dining calgary'],
   openGraph: {
-    title: 'New Restaurants in Calgary - Now Open Calgary',
-    description: 'Discover the newest restaurants, cafes, and dining establishments opening in Calgary.',
+    title: 'New Restaurants Calgary 2024 | Latest Calgary Dining | Now Open Calgary',
+    description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC.',
     type: 'website',
     url: 'https://nowopencalgary.ca/restaurants',
     siteName: 'Now Open Calgary'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'New Restaurants in Calgary - Now Open Calgary',
-    description: 'Discover the newest restaurants, cafes, and dining establishments opening in Calgary.'
+    title: 'New Restaurants Calgary 2024 | Latest Calgary Dining',
+    description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC.'
   },
   alternates: {
     canonical: 'https://nowopencalgary.ca/restaurants'
