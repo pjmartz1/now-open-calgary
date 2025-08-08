@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     businessPages = businesses.map((business) => ({
       url: `${baseUrl}/business/${business.slug}`,
-      lastModified: new Date(business.updatedAt || business.createdAt),
+      lastModified: new Date(business.created_at),
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     }))
