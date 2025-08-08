@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
     // Disable worker threads entirely
     config.parallelism = 1;
     
+    // Fix Windows ESM loader issues
+    config.resolve = config.resolve || {};
+    config.resolve.extensionAlias = {
+      '.js': ['.js', '.ts'],
+      '.jsx': ['.jsx', '.tsx'],
+    };
+    
     if (dev) {
       // Force synchronous compilation in development
       config.cache = false;
