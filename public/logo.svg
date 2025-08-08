@@ -1,0 +1,29 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="url(#logoGradient)" />
+  
+  <!-- Calgary skyline silhouette -->
+  <rect x="30" y="130" width="8" height="40" fill="white" opacity="0.9"/>
+  <rect x="42" y="120" width="10" height="50" fill="white" opacity="0.9"/>
+  <rect x="56" y="135" width="6" height="35" fill="white" opacity="0.9"/>
+  <rect x="66" y="115" width="12" height="55" fill="white" opacity="0.9"/>
+  <rect x="82" y="125" width="8" height="45" fill="white" opacity="0.9"/>
+  <rect x="94" y="110" width="14" height="60" fill="white" opacity="0.9"/>
+  <rect x="112" y="120" width="10" height="50" fill="white" opacity="0.9"/>
+  <rect x="126" y="130" width="8" height="40" fill="white" opacity="0.9"/>
+  <rect x="138" y="125" width="10" height="45" fill="white" opacity="0.9"/>
+  <rect x="152" y="135" width="6" height="35" fill="white" opacity="0.9"/>
+  <rect x="162" y="120" width="8" height="50" fill="white" opacity="0.9"/>
+  
+  <!-- "OPEN" text in modern style -->
+  <text x="100" y="70" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="24">NOW</text>
+  <text x="100" y="95" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="20">OPEN</text>
+</svg>

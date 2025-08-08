@@ -5,6 +5,12 @@ import { Search, Filter, MapPin, Tag, ChevronDown } from 'lucide-react'
 import CalgaryBusinessGrid from '@/components/CalgaryBusinessGrid'
 import { BusinessService, BusinessCardData } from '@/services/businessService'
 import { cn } from '@/lib/utils'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Browse All Businesses',
+  description: 'Explore all new businesses in Calgary. Search and filter by category, location, and more.',
+}
 
 export default function BusinessesPage() {
   const [businesses, setBusinesses] = useState<BusinessCardData[]>([])

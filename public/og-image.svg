@@ -1,0 +1,42 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)" />
+  
+  <!-- Calgary skyline -->
+  <rect x="100" y="450" width="20" height="100" fill="white" opacity="0.2"/>
+  <rect x="130" y="420" width="25" height="130" fill="white" opacity="0.2"/>
+  <rect x="165" y="470" width="15" height="80" fill="white" opacity="0.2"/>
+  <rect x="190" y="400" width="30" height="150" fill="white" opacity="0.2"/>
+  <rect x="230" y="440" width="20" height="110" fill="white" opacity="0.2"/>
+  <rect x="260" y="380" width="35" height="170" fill="white" opacity="0.2"/>
+  <rect x="305" y="420" width="25" height="130" fill="white" opacity="0.2"/>
+  <rect x="340" y="460" width="20" height="90" fill="white" opacity="0.2"/>
+  
+  <!-- More buildings on the right -->
+  <rect x="800" y="460" width="20" height="90" fill="white" opacity="0.2"/>
+  <rect x="830" y="420" width="25" height="130" fill="white" opacity="0.2"/>
+  <rect x="865" y="440" width="20" height="110" fill="white" opacity="0.2"/>
+  <rect x="895" y="400" width="30" height="150" fill="white" opacity="0.2"/>
+  <rect x="935" y="470" width="15" height="80" fill="white" opacity="0.2"/>
+  <rect x="960" y="430" width="25" height="120" fill="white" opacity="0.2"/>
+  <rect x="995" y="450" width="20" height="100" fill="white" opacity="0.2"/>
+  
+  <!-- Main text -->
+  <text x="600" y="200" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="72">NOW OPEN</text>
+  <text x="600" y="280" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="54">CALGARY</text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="340" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="400" font-size="24" opacity="0.9">Discover the newest businesses opening in Calgary</text>
+  
+  <!-- Website -->
+  <text x="600" y="500" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="600" font-size="20" opacity="0.8">nowopencalgary.ca</text>
+</svg>
