@@ -10,8 +10,9 @@ export async function GET(request: NextRequest) {
 
     console.log('🔄 Starting daily Calgary business sync...')
 
-    // Call our existing sync API
+    // Call our existing sync API with API key
     const syncUrl = new URL('/api/sync-businesses', request.url)
+    syncUrl.searchParams.set('api_key', process.env.API_SECRET_KEY || '')
     
     const syncResponse = await fetch(syncUrl.toString(), {
       method: 'POST',
