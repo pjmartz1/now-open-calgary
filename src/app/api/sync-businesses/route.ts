@@ -1,5 +1,6 @@
 // API Route for syncing Calgary business data
 // POST /api/sync-businesses
+// SECURED: Requires API key authentication
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -8,13 +9,52 @@ import {
   fetchAllBusinesses
 } from '@/lib/calgary-api'
 
-// Create service role client for admin operations - only if env vars available
+// Security: Only create admin client with service role key (not anon key)
 let supabaseAdmin: ReturnType<typeof createClient> | null = null
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (supabaseUrl && supabaseKey) {
-  supabaseAdmin = createClient(supabaseUrl, supabaseKey)
+if (supabaseUrl && supabaseServiceKey) {
+  supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+}
+
+// Security: API key for protecting this endpoint
+const API_SECRET_KEY = process.env.API_SECRET_KEY
+
+// Rate limiting: Simple in-memory store (use Redis in production)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
+const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 5 // 5 requests per minute per IP
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const record = rateLimitStore.get(ip)
+  
+  if (!record || now > record.resetTime) {
+    rateLimitStore.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
+    return true
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false
+  }
+  
+  record.count++
+  return true
+}
+
+function authenticate(request: NextRequest): boolean {
+  // Check API key in Authorization header
+  const authHeader = request.headers.get('authorization')
+  const apiKeyFromHeader = authHeader?.replace('Bearer ', '')
+  
+  // Check API key in query params (less secure, for testing only)
+  const { searchParams } = new URL(request.url)
+  const apiKeyFromQuery = searchParams.get('api_key')
+  
+  const providedKey = apiKeyFromHeader || apiKeyFromQuery
+  
+  return providedKey === API_SECRET_KEY && API_SECRET_KEY !== 'your_secure_random_key_here_change_this_immediately'
 }
 import type { CalgaryBusinessInput } from '@/types/business'
 
@@ -44,17 +84,55 @@ interface SyncRequest {
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
   
-  // Check if Supabase is available
-  if (!supabaseAdmin) {
+  // Security check 1: Rate limiting
+  const clientIP = request.headers.get('x-forwarded-for') || 
+                  request.headers.get('x-real-ip') || 
+                  'unknown'
+  
+  if (!checkRateLimit(clientIP)) {
     return NextResponse.json({
       success: false,
-      message: 'Database not available during build time',
+      message: 'Rate limit exceeded. Too many requests.',
       stats: {
         fetched: 0,
         processed: 0,
         inserted: 0,
         updated: 0,
-        errors: 0,
+        errors: 1,
+        skipped: 0
+      },
+      duration: Date.now() - startTime
+    } as SyncResult, { status: 429 })
+  }
+  
+  // Security check 2: Authentication
+  if (!authenticate(request)) {
+    return NextResponse.json({
+      success: false,
+      message: 'Unauthorized. Valid API key required.',
+      stats: {
+        fetched: 0,
+        processed: 0,
+        inserted: 0,
+        updated: 0,
+        errors: 1,
+        skipped: 0
+      },
+      duration: Date.now() - startTime
+    } as SyncResult, { status: 401 })
+  }
+  
+  // Security check 3: Service role key required (not anon key)
+  if (!supabaseAdmin) {
+    return NextResponse.json({
+      success: false,
+      message: 'Service unavailable. Admin database connection required.',
+      stats: {
+        fetched: 0,
+        processed: 0,
+        inserted: 0,
+        updated: 0,
+        errors: 1,
         skipped: 0
       },
       duration: Date.now() - startTime
@@ -273,11 +351,31 @@ export async function POST(request: NextRequest) {
 
 // GET endpoint for checking sync status or running test sync
 export async function GET(request: NextRequest) {
-  // Check if Supabase is available
+  // Security check 1: Rate limiting
+  const clientIP = request.headers.get('x-forwarded-for') || 
+                  request.headers.get('x-real-ip') || 
+                  'unknown'
+  
+  if (!checkRateLimit(clientIP)) {
+    return NextResponse.json({
+      success: false,
+      message: 'Rate limit exceeded. Too many requests.'
+    }, { status: 429 })
+  }
+  
+  // Security check 2: Authentication
+  if (!authenticate(request)) {
+    return NextResponse.json({
+      success: false,
+      message: 'Unauthorized. Valid API key required.'
+    }, { status: 401 })
+  }
+  
+  // Security check 3: Service role key required
   if (!supabaseAdmin) {
     return NextResponse.json({
       success: false,
-      message: 'Database not available during build time'
+      message: 'Service unavailable. Admin database connection required.'
     }, { status: 503 })
   }
   
