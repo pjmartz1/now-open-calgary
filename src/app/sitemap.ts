@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { BusinessService } from '@/services/businessService'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://nowopencalgary.ca'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.nowopencalgary.ca'
 
   // Static pages
   const staticPages = [

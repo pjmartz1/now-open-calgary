@@ -1,29 +1,28 @@
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
     </linearGradient>
   </defs>
   
-  <!-- Background circle -->
-  <circle cx="100" cy="100" r="90" fill="url(#logoGradient)" />
+  <!-- Location pin base -->
+  <path d="M20 4C14.5 4 10 8.5 10 14c0 8 10 20 10 20s10-12 10-20c0-5.5-4.5-10-10-10z" 
+        fill="url(#logoGradient)" fill-opacity="0.1" stroke="url(#logoGradient)" stroke-width="1.5"/>
   
-  <!-- Calgary skyline silhouette -->
-  <rect x="30" y="130" width="8" height="40" fill="white" opacity="0.9"/>
-  <rect x="42" y="120" width="10" height="50" fill="white" opacity="0.9"/>
-  <rect x="56" y="135" width="6" height="35" fill="white" opacity="0.9"/>
-  <rect x="66" y="115" width="12" height="55" fill="white" opacity="0.9"/>
-  <rect x="82" y="125" width="8" height="45" fill="white" opacity="0.9"/>
-  <rect x="94" y="110" width="14" height="60" fill="white" opacity="0.9"/>
-  <rect x="112" y="120" width="10" height="50" fill="white" opacity="0.9"/>
-  <rect x="126" y="130" width="8" height="40" fill="white" opacity="0.9"/>
-  <rect x="138" y="125" width="10" height="45" fill="white" opacity="0.9"/>
-  <rect x="152" y="135" width="6" height="35" fill="white" opacity="0.9"/>
-  <rect x="162" y="120" width="8" height="50" fill="white" opacity="0.9"/>
+  <!-- Door opening effect -->
+  <rect x="16" y="12" width="8" height="12" rx="1" fill="url(#logoGradient)" fill-opacity="0.8"/>
+  <rect x="18" y="14" width="4" height="8" rx="0.5" fill="white" fill-opacity="0.9"/>
   
-  <!-- "OPEN" text in modern style -->
-  <text x="100" y="70" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="24">NOW</text>
-  <text x="100" y="95" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="20">OPEN</text>
+  <!-- Calgary mountain silhouette (subtle) -->
+  <path d="M8 30 L12 24 L16 28 L20 22 L24 26 L28 20 L32 28 L32 30 Z" 
+        fill="url(#logoGradient)" fill-opacity="0.3"/>
+  
+  <!-- Door handle -->
+  <circle cx="21" cy="18" r="0.8" fill="url(#logoGradient)"/>
+  
+  <!-- Location pin center -->
+  <circle cx="20" cy="14" r="2" fill="url(#logoGradient)"/>
+  <circle cx="20" cy="14" r="1" fill="white"/>
 </svg>

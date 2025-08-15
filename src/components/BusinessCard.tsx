@@ -55,7 +55,7 @@ export default function BusinessCard({ business, className }: BusinessCardProps)
       
       {/* Business Image */}
       {business.images && business.images.length > 0 && (
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-56 lg:h-64 overflow-hidden">
           <Image
             src={business.images[0]}
             alt={`${business.name} in Calgary`}
@@ -73,30 +73,30 @@ export default function BusinessCard({ business, className }: BusinessCardProps)
       )}
       
       {/* Business Content */}
-      <div className="p-6">
+      <div className="p-8 lg:p-10">
         {/* Header */}
         <div className="mb-4">
           <h3 
-            className="text-xl font-bold text-gray-900 mb-2 hover:text-indigo-600 transition-colors"
+            className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3 hover:text-indigo-600 transition-colors"
             itemProp="name"
           >
             {business.name}
           </h3>
           <p 
-            className="text-gray-600 text-sm mb-3"
+            className="text-gray-600 text-base lg:text-lg mb-4"
             itemProp="description"
           >
             {business.description}
           </p>
           
           {/* Category Badge */}
-          <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mb-3">
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mb-4">
             {business.category}
           </div>
         </div>
         
         {/* Details */}
-        <div className="space-y-2 mb-4">
+        <div className="space-y-3 mb-6">
           {/* Address */}
           <div className="flex items-start gap-2 text-sm text-gray-600">
             <MapPin className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" />

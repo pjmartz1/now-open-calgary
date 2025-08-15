@@ -26,17 +26,17 @@ export default function BusinessGrid({
   return (
     <section className={className}>
       {(title || subtitle) && (
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           {title && (
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">{title}</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">{title}</h2>
           )}
           {subtitle && (
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">{subtitle}</p>
+            <p className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto">{subtitle}</p>
           )}
         </div>
       )}
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 xl:gap-10">
         {businesses.map((business) => (
           <BusinessCard 
             key={business.id} 

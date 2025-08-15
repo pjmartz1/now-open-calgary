@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: 'New Services Calgary 2024 | Latest Professional Services',
     description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC.',
     type: 'website',
-    url: 'https://nowopencalgary.ca/services',
+    url: 'https://www.nowopencalgary.ca/services',
     siteName: 'Now Open Calgary'
   },
   twitter: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC.'
   },
   alternates: {
-    canonical: 'https://nowopencalgary.ca/services'
+    canonical: 'https://www.nowopencalgary.ca/services'
   }
 }
 
@@ -160,7 +160,7 @@ export default async function ServicesPage() {
             "@type": "CollectionPage",
             "name": "New Services in Calgary",
             "description": "Discover the newest service providers opening in Calgary.",
-            "url": "https://nowopencalgary.ca/services",
+            "url": "https://www.nowopencalgary.ca/services",
             "mainEntity": {
               "@type": "ItemList",
               "numberOfItems": services.length,
@@ -177,7 +177,7 @@ export default async function ServicesPage() {
                     "addressRegion": "AB",
                     "addressCountry": "CA"
                   },
-                  "url": `https://nowopencalgary.ca/business/${service.slug}`
+                  "url": `https://www.nowopencalgary.ca/business/${service.slug}`
                 }
               }))
             }

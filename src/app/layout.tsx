@@ -5,11 +5,11 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   title: {
-    default: "Now Open Calgary - Discover New Businesses in Calgary",
+    default: "New Businesses Calgary 2024 | Latest Restaurant & Shop Openings | Now Open Calgary",
     template: "%s | Now Open Calgary"
   },
-  description: "Discover what's new in Calgary! Find the newest businesses, restaurants, shops and services opening their doors. Your complete Calgary business directory for fresh openings.",
-  keywords: ["new in calgary", "new businesses calgary", "calgary business directory", "newest restaurants calgary", "new shops calgary", "new services calgary", "what's new calgary", "calgary openings"],
+  description: "Find 500+ new businesses opening in Calgary 2024! Fresh restaurants, shops & services with addresses, hours & reviews. Updated daily. Your #1 Calgary business directory.",
+  keywords: ["new businesses calgary", "calgary business directory", "new restaurants calgary 2024", "latest calgary openings", "calgary new shops", "YYC business openings", "fresh businesses calgary", "new services calgary", "calgary restaurant openings", "newest stores calgary"],
   authors: [{ name: "Now Open Calgary" }],
   creator: "Now Open Calgary",
   publisher: "Now Open Calgary",
@@ -18,14 +18,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://nowopencalgary.ca'),
+  metadataBase: new URL('https://www.nowopencalgary.ca'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: "Now Open Calgary - Discover New Businesses in Calgary",
-    description: "Discover what's new in Calgary! Find the newest businesses, restaurants, shops and services opening their doors. Your complete Calgary business directory for fresh openings.",
-    url: 'https://nowopencalgary.ca',
+    title: "New Businesses Calgary 2024 | Latest Restaurant & Shop Openings",
+    description: "Find 500+ new businesses opening in Calgary 2024! Fresh restaurants, shops & services with addresses, hours & reviews. Updated daily.",
+    url: 'https://www.nowopencalgary.ca',
     siteName: 'Now Open Calgary',
     images: [
       {
@@ -40,8 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Now Open Calgary - Discover New Businesses in Calgary",
-    description: "Discover what's new in Calgary! Find the newest businesses, restaurants, shops and services opening their doors. Your complete Calgary business directory for fresh openings.",
+    title: "New Businesses Calgary 2024 | Latest Restaurant & Shop Openings",
+    description: "Find 500+ new businesses opening in Calgary 2024! Fresh restaurants, shops & services. Updated daily.",
     images: ['/og-image.svg'],
   },
   robots: {

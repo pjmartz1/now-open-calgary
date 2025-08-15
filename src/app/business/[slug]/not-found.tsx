@@ -110,14 +110,14 @@ export default function NotFound() {
             "@type": "WebPage",
             "name": "Business Not Found - Now Open Calgary",
             "description": "The requested business could not be found. Discover other new businesses opening in Calgary.",
-            "url": "https://nowopencalgary.ca/business/not-found",
+            "url": "https://www.nowopencalgary.ca/business/not-found",
             "mainEntity": {
               "@type": "WebSite",
               "name": "Now Open Calgary",
-              "url": "https://nowopencalgary.ca",
+              "url": "https://www.nowopencalgary.ca",
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://nowopencalgary.ca/businesses?q={search_term_string}",
+                "target": "https://www.nowopencalgary.ca/businesses?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
             }

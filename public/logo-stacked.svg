@@ -1,0 +1,26 @@
+<svg width="80" height="100" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="stackedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="doorGradientS" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.95" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:0.85" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Centered logo icon -->
+  <rect x="20" y="10" width="40" height="40" rx="8" fill="url(#stackedGradient)" />
+  <path d="M24 38 L28 32 L32 35 L36 30 L40 34 L44 28 L48 32 L52 36 L52 42 L24 42 Z" 
+        fill="white" opacity="0.15"/>
+  <rect x="32" y="18" width="16" height="20" rx="2" fill="url(#doorGradientS)" />
+  <circle cx="45" cy="28" r="1.5" fill="#4f46e5" opacity="0.7"/>
+  <rect x="31" y="18" width="1" height="20" rx="0.5" fill="#db2777" opacity="0.8"/>
+  <circle cx="40" cy="22" r="1" fill="#db2777" />
+  
+  <!-- Stacked text -->
+  <text x="40" y="70" text-anchor="middle" fill="url(#stackedGradient)" font-family="Inter, sans-serif" font-weight="800" font-size="14" letter-spacing="-0.025em">NOW OPEN</text>
+  <text x="40" y="85" text-anchor="middle" fill="#64748b" font-family="Inter, sans-serif" font-weight="600" font-size="12" letter-spacing="0.05em">CALGARY</text>
+</svg>

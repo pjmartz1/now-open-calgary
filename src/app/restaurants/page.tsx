@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: 'New Restaurants Calgary 2024 | Latest Calgary Dining | Now Open Calgary',
     description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC.',
     type: 'website',
-    url: 'https://nowopencalgary.ca/restaurants',
+    url: 'https://www.nowopencalgary.ca/restaurants',
     siteName: 'Now Open Calgary'
   },
   twitter: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC.'
   },
   alternates: {
-    canonical: 'https://nowopencalgary.ca/restaurants'
+    canonical: 'https://www.nowopencalgary.ca/restaurants'
   }
 }
 
@@ -160,7 +160,7 @@ export default async function RestaurantsPage() {
             "@type": "CollectionPage",
             "name": "New Restaurants in Calgary",
             "description": "Discover the newest restaurants, cafes, and dining establishments opening in Calgary.",
-            "url": "https://nowopencalgary.ca/restaurants",
+            "url": "https://www.nowopencalgary.ca/restaurants",
             "mainEntity": {
               "@type": "ItemList",
               "numberOfItems": restaurants.length,
@@ -177,7 +177,7 @@ export default async function RestaurantsPage() {
                     "addressRegion": "AB",
                     "addressCountry": "CA"
                   },
-                  "url": `https://nowopencalgary.ca/business/${restaurant.slug}`
+                  "url": `https://www.nowopencalgary.ca/business/${restaurant.slug}`
                 }
               }))
             }

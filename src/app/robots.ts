@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/admin/'],
     },
-    sitemap: 'https://nowopencalgary.ca/sitemap.xml',
+    sitemap: 'https://www.nowopencalgary.ca/sitemap.xml',
   }
 }

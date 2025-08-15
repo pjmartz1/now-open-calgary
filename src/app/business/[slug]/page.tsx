@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
     },
     alternates: {
-      canonical: `https://nowopencalgary.ca/business/${business.slug}`
+      canonical: `https://www.nowopencalgary.ca/business/${business.slug}`
     }
   }
 }
@@ -135,7 +135,7 @@ function BusinessSchema({ business }: { business: CalgaryBusiness }) {
       "latitude": parseFloat(business.latitude.toString()),
       "longitude": parseFloat(business.longitude.toString())
     } : undefined,
-    "url": `https://nowopencalgary.ca/business/${business.slug}`,
+    "url": `https://www.nowopencalgary.ca/business/${business.slug}`,
     "description": `New ${business.license_type.toLowerCase()} in Calgary${business.community ? `, ${business.community}` : ''}. Opened ${new Date(business.first_issued_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}.`,
     "openingDate": business.first_issued_date,
     "priceRange": "$$",

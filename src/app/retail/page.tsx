@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: 'New Shops Calgary 2024 | Latest Retail Stores & Boutiques',
     description: 'Discover 100+ new shops in Calgary! Fresh boutiques, trendy stores & hot new retail openings in YYC.',
     type: 'website',
-    url: 'https://nowopencalgary.ca/retail',
+    url: 'https://www.nowopencalgary.ca/retail',
     siteName: 'Now Open Calgary'
   },
   twitter: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description: 'Discover 100+ new shops in Calgary! Fresh boutiques, trendy stores & hot new retail openings in YYC.'
   },
   alternates: {
-    canonical: 'https://nowopencalgary.ca/retail'
+    canonical: 'https://www.nowopencalgary.ca/retail'
   }
 }
 
@@ -160,7 +160,7 @@ export default async function RetailPage() {
             "@type": "CollectionPage",
             "name": "New Shops & Retail in Calgary",
             "description": "Discover the newest retail stores, boutiques, and shopping destinations opening in Calgary.",
-            "url": "https://nowopencalgary.ca/retail",
+            "url": "https://www.nowopencalgary.ca/retail",
             "mainEntity": {
               "@type": "ItemList",
               "numberOfItems": retailers.length,
@@ -177,7 +177,7 @@ export default async function RetailPage() {
                     "addressRegion": "AB",
                     "addressCountry": "CA"
                   },
-                  "url": `https://nowopencalgary.ca/business/${retailer.slug}`
+                  "url": `https://www.nowopencalgary.ca/business/${retailer.slug}`
                 }
               }))
             }

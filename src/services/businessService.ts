@@ -35,7 +35,7 @@ export class BusinessService {
       return []
     }
     
-    const { data, error } = await typedSupabase
+    const { data, error } = await typedSupabase!
       .from('calgary_businesses')
       .select('*')
       .eq('is_consumer_facing', true)
@@ -73,7 +73,7 @@ export class BusinessService {
       return { businesses: [], total: 0 }
     }
     
-    let query = typedSupabase
+    let query = typedSupabase!
       .from('calgary_businesses')
       .select('*', { count: 'exact' })
       .eq('is_consumer_facing', true)
@@ -130,7 +130,7 @@ export class BusinessService {
       return []
     }
     
-    const { data, error } = await typedSupabase
+    const { data, error } = await typedSupabase!
       .from('calgary_businesses')
       .select('*')
       .eq('category', category)
@@ -160,7 +160,7 @@ export class BusinessService {
       return null
     }
     
-    const { data, error } = await typedSupabase
+    const { data, error } = await typedSupabase!
       .from('calgary_businesses')
       .select('*')
       .eq('slug', slug)
@@ -173,7 +173,7 @@ export class BusinessService {
     }
 
     // Increment view count
-    if (data) {
+    if (data && typedSupabase) {
       await typedSupabase
         .from('calgary_businesses')
         .update({ view_count: (data.view_count || 0) + 1 })
@@ -190,7 +190,7 @@ export class BusinessService {
       return []
     }
     
-    const { data, error } = await typedSupabase
+    const { data, error } = await typedSupabase!
       .from('calgary_businesses')
       .select('category')
       .eq('is_consumer_facing', true)
@@ -213,7 +213,7 @@ export class BusinessService {
       return []
     }
     
-    const { data, error } = await typedSupabase
+    const { data, error } = await typedSupabase!
       .from('calgary_businesses')
       .select('community')
       .eq('is_consumer_facing', true)
@@ -247,12 +247,7 @@ export class BusinessService {
         return []
       }
       
-      if (!supabase) {
-        console.warn('Supabase client not available')
-        return []
-      }
-      
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('businesses')
         .select(`
           *,
@@ -300,12 +295,7 @@ export class BusinessService {
         return []
       }
       
-      if (!supabase) {
-        console.warn('Supabase client not available')
-        return []
-      }
-      
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('businesses')
         .select(`
           *,
@@ -354,7 +344,7 @@ export class BusinessService {
         return null
       }
       
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('businesses')
         .select(`
           *,
@@ -404,7 +394,7 @@ export class BusinessService {
         return []
       }
       
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('businesses')
         .select(`
           *,
@@ -453,7 +443,7 @@ export class BusinessService {
         return []
       }
       
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('businesses')
         .select(`
           *,
@@ -508,7 +498,7 @@ export class BusinessService {
         return []
       }
       
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('businesses')
         .select(`
           *,
@@ -557,7 +547,7 @@ export class BusinessService {
         return []
       }
       
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('categories')
         .select('*')
         .order('name')
@@ -590,7 +580,7 @@ export class BusinessService {
         return []
       }
       
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('neighborhoods')
         .select('*')
         .order('name')
