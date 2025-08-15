@@ -157,7 +157,7 @@ export class BusinessService {
   // Search Calgary businesses
   static async searchBusinesses(query: string, limit = 20): Promise<BusinessCardData[]> {
     try {
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !supabase) {
         return []
       }
 
@@ -176,6 +176,57 @@ export class BusinessService {
     } catch (error) {
       console.error('Error searching Calgary businesses:', error)
       return []
+    }
+  }
+
+  // Get all Calgary businesses with pagination and filters
+  static async getAllCalgaryBusinesses(params: {
+    search?: string
+    category?: string
+    community?: string
+    limit?: number
+    offset?: number
+  }): Promise<{ businesses: BusinessCardData[], total: number }> {
+    try {
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !supabase) {
+        return { businesses: [], total: 0 }
+      }
+
+      const { search, category, community, limit = 20, offset = 0 } = params
+
+      let query = supabase
+        .from('calgary_businesses')
+        .select('*', { count: 'exact' })
+        .eq('active', true)
+        .eq('is_consumer_facing', true)
+
+      // Apply filters
+      if (search) {
+        query = query.or(`tradename.ilike.%${search}%,address.ilike.%${search}%,community.ilike.%${search}%,category.ilike.%${search}%`)
+      }
+      if (category) {
+        query = query.eq('category', category)
+      }
+      if (community) {
+        query = query.eq('community', community)
+      }
+
+      // Apply pagination
+      query = query
+        .order('first_issued_date', { ascending: false })
+        .range(offset, offset + limit - 1)
+
+      const { data, error, count } = await query
+
+      if (error) throw error
+
+      return {
+        businesses: data || [],
+        total: count || 0
+      }
+    } catch (error) {
+      console.error('Error fetching all Calgary businesses:', error)
+      return { businesses: [], total: 0 }
     }
   }
 
