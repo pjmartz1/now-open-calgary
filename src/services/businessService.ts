@@ -2,6 +2,16 @@
 import { supabase } from '@/lib/supabase'
 import { CalgaryBusiness } from '@/types/business'
 
+// Utility function to sanitize search queries
+function sanitizeSearchQuery(query: string): string {
+  // Remove any SQL injection attempts and special characters
+  return query
+    .replace(/[%_'"\\]/g, '') // Remove SQL wildcards and quotes
+    .replace(/[<>]/g, '') // Remove potential HTML/script tags
+    .trim()
+    .slice(0, 100) // Limit length to prevent abuse
+}
+
 // Interface for Calgary business data used in cards
 export interface BusinessCardData {
   id: string
@@ -152,12 +162,20 @@ export class BusinessService {
         return []
       }
 
+      // Sanitize the search query
+      const sanitizedQuery = sanitizeSearchQuery(query)
+      
+      // Return empty results if query is empty after sanitization
+      if (!sanitizedQuery) {
+        return []
+      }
+
       const { data, error } = await supabase
         .from('calgary_businesses')
         .select('*')
         .eq('active', true)
         .eq('is_consumer_facing', true)
-        .or(`tradename.ilike.%${query}%,address.ilike.%${query}%,community.ilike.%${query}%,category.ilike.%${query}%`)
+        .or(`tradename.ilike.%${sanitizedQuery}%,address.ilike.%${sanitizedQuery}%,community.ilike.%${sanitizedQuery}%,category.ilike.%${sanitizedQuery}%`)
         .order('first_issued_date', { ascending: false })
         .limit(limit)
 
@@ -193,7 +211,10 @@ export class BusinessService {
 
       // Apply filters
       if (search) {
-        query = query.or(`tradename.ilike.%${search}%,address.ilike.%${search}%,community.ilike.%${search}%,category.ilike.%${search}%`)
+        const sanitizedSearch = sanitizeSearchQuery(search)
+        if (sanitizedSearch) {
+          query = query.or(`tradename.ilike.%${sanitizedSearch}%,address.ilike.%${sanitizedSearch}%,community.ilike.%${sanitizedSearch}%,category.ilike.%${sanitizedSearch}%`)
+        }
       }
       if (category) {
         query = query.eq('category', category)
