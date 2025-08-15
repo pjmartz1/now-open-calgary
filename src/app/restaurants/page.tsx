@@ -29,7 +29,9 @@ export default async function RestaurantsPage() {
   const restaurants = await BusinessService.getCalgaryBusinessesByCategory('restaurants', 50)
 
   // Get some stats
-  const recentCount = restaurants.filter(r => r.isNew).length
+  const oneWeekAgo = new Date()
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+  const recentCount = restaurants.filter(r => new Date(r.first_issued_date) >= oneWeekAgo).length
   const communities = [...new Set(restaurants.map(r => r.community).filter(Boolean))].length
 
   return (

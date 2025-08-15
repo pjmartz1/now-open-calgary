@@ -82,12 +82,17 @@ export default function CalgaryBusinessGrid({
                   )}
                 </div>
                 
-                {business.isNew && (
-                  <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ml-2">
-                    <Sparkles className="w-3 h-3" />
-                    New!
-                  </div>
-                )}
+                {(() => {
+                  const oneWeekAgo = new Date()
+                  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+                  const isNew = new Date(business.first_issued_date) >= oneWeekAgo
+                  return isNew ? (
+                    <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ml-2">
+                      <Sparkles className="w-3 h-3" />
+                      New!
+                    </div>
+                  ) : null
+                })()}
               </div>
 
               {/* Location */}

@@ -29,7 +29,9 @@ export default async function ServicesPage() {
   const services = await BusinessService.getCalgaryBusinessesByCategory('services', 50)
 
   // Get some stats
-  const recentCount = services.filter(s => s.isNew).length
+  const oneWeekAgo = new Date()
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+  const recentCount = services.filter(s => new Date(s.first_issued_date) >= oneWeekAgo).length
   const communities = [...new Set(services.map(s => s.community).filter(Boolean))].length
 
   return (

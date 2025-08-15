@@ -29,7 +29,9 @@ export default async function RetailPage() {
   const retailers = await BusinessService.getCalgaryBusinessesByCategory('retail', 50)
 
   // Get some stats
-  const recentCount = retailers.filter(r => r.isNew).length
+  const oneWeekAgo = new Date()
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+  const recentCount = retailers.filter(r => new Date(r.first_issued_date) >= oneWeekAgo).length
   const communities = [...new Set(retailers.map(r => r.community).filter(Boolean))].length
 
   return (

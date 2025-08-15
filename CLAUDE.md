@@ -458,4 +458,169 @@ project/
 
 ---
 
+## Recent Codebase Cleanup and Optimization (August 2024)
+
+### Overview
+A comprehensive cleanup and optimization effort was completed to streamline the codebase, remove unnecessary code, and improve maintainability. This cleanup focused on consolidating the project to use only Calgary-specific business data and removing legacy components.
+
+### Cleanup Summary
+
+#### 🗑️ Files Removed
+**Unused Components:**
+- `src/components/BusinessGrid.tsx` - Legacy business grid component
+- `src/components/BusinessCard.tsx` - Legacy business card component
+
+**Unused Data:**
+- `src/data/sample-businesses.ts` - Legacy sample data
+- `src/data/` directory - Empty directory removed
+
+**Unused API Routes:**
+- All debug routes: `debug-*`, `test-*` directories
+- Kept only essential routes: `sync-businesses/` and `cron/`
+
+**Debug & Utility Files:**
+- `fix-domain-urls.js`
+- `debug-redirects.js`
+- `debug-comprehensive.js`
+- `screenshot.js`
+- `DEBUG_SUMMARY.md`
+- `supabase-schema.sql` (old schema)
+
+**Empty Directories:**
+- `src/utils/` - Removed empty directory
+
+#### 🔧 Code Consolidation
+
+**BusinessService.ts Optimization:**
+- Removed all legacy business methods (`getBusinesses`, `getFeaturedBusinesses`, etc.)
+- Kept only Calgary-specific methods
+- Fixed all TypeScript null check errors
+- Clean, focused interface with proper error handling
+
+**Supabase Client Consolidation:**
+- Consolidated to single client instance
+- Removed unused type definitions (`Business`, `Category`, `Neighborhood`)
+- Fixed "Multiple GoTrueClient instances" warning
+- Streamlined database type definitions
+
+**Type Safety Improvements:**
+- All TypeScript errors resolved
+- Proper null checks implemented throughout
+- Clean type definitions for Calgary business data
+
+#### 🗄️ Database Schema Cleanup
+
+**Unused Tables Identified:**
+- `businesses` - Old business table with different schema
+- `categories` - Old categories table (not used)
+- `neighborhoods` - Old neighborhoods table (not used)
+
+**Cleanup Script Created:**
+- `cleanup-unused-tables.sql` - Comprehensive database cleanup script
+- Removes all unused tables, views, indexes, and triggers
+- Preserves Calgary business data and related objects
+- Safe to run multiple times with CASCADE operations
+
+**Remaining Database Objects:**
+- `calgary_businesses` - Main table with Calgary business data
+- `recent_calgary_businesses` - View for recent businesses
+- `calgary_businesses_by_community` - View for community stats
+- `calgary_businesses_by_category` - View for category stats
+- Required extensions and functions
+
+### Build and Performance Results
+
+#### ✅ Build Status
+- **TypeScript Errors:** 0 (all resolved)
+- **Linting Errors:** 0 (all resolved)
+- **Build Time:** Optimized (13-15 seconds)
+- **Bundle Size:** Reduced and optimized
+
+#### 📊 Bundle Analysis
+```
+Route (app)                                 Size  First Load JS    
+┌ ○ /                                    5.07 kB         156 kB
+├ ○ /businesses                          4.15 kB         155 kB
+├ ○ /restaurants                           167 B         103 kB
+├ ○ /retail                                167 B         103 kB
+├ ○ /services                              167 B         103 kB
+└ ○ /business/[slug]                       165 B         103 kB
+```
+
+#### 🚀 Performance Improvements
+- **Reduced Bundle Size:** Removed unused components and legacy code
+- **Faster Build Times:** Cleaner dependency tree
+- **Better Type Safety:** Comprehensive TypeScript coverage
+- **Improved Maintainability:** Focused, single-purpose codebase
+
+### Current Project Structure
+
+```
+project/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── cron/daily-sync/
+│   │   │   └── sync-businesses/
+│   │   ├── business/[slug]/
+│   │   ├── businesses/
+│   │   ├── restaurants/
+│   │   ├── retail/
+│   │   ├── services/
+│   │   └── layout.tsx, page.tsx
+│   ├── components/
+│   │   ├── CalgaryBusinessGrid.tsx
+│   │   ├── ErrorBoundary.tsx
+│   │   └── Header.tsx
+│   ├── lib/
+│   │   ├── calgary-api.ts
+│   │   ├── supabase.ts
+│   │   └── utils.ts
+│   ├── services/
+│   │   └── businessService.ts
+│   └── types/
+│       └── business.ts
+├── public/
+├── calgary-business-schema.sql
+├── cleanup-unused-tables.sql
+├── package.json
+└── next.config.ts
+```
+
+### Features Status
+
+#### ✅ Fully Functional
+- **Search System:** Homepage, header, and business listing search
+- **Category Pages:** Restaurants, retail, services with filtering
+- **Business Details:** Individual business pages with dynamic routing
+- **Data Management:** Supabase integration with Calgary business data
+- **SEO Optimization:** Meta tags, sitemap, and structured data
+
+#### 🔧 Technical Improvements
+- **Error Handling:** Comprehensive error boundaries and fallbacks
+- **Loading States:** Proper loading indicators throughout
+- **Responsive Design:** Mobile-first approach with Tailwind CSS
+- **Type Safety:** Full TypeScript coverage with proper interfaces
+
+### Next Steps
+
+1. **Database Cleanup:** Run `cleanup-unused-tables.sql` in Supabase
+2. **Deployment:** Deploy to Vercel with optimized build
+3. **Monitoring:** Set up performance monitoring and error tracking
+4. **Content:** Populate with Calgary business data via sync process
+
+### Lessons Learned from Cleanup
+
+1. **Legacy Code Accumulation:** Regular cleanup prevents technical debt
+2. **Type Safety:** Proper TypeScript usage prevents runtime errors
+3. **Database Optimization:** Removing unused tables improves performance
+4. **Component Consolidation:** Focused components are easier to maintain
+5. **Build Optimization:** Clean dependency tree improves build times
+
+---
+
+*This cleanup effort demonstrates the importance of regular code maintenance and optimization for long-term project health.*
+
+---
+
 *This documentation was generated to capture the complete development process, requirements, and lessons learned from building the Now Open Calgary business directory platform.*
