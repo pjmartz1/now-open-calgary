@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { MapPin, Clock, Star, ArrowRight, Search, Utensils, ShoppingBag, Briefcase, TrendingUp, Users, CheckCircle, Sparkles } from "lucide-react";
+import { MapPin, ArrowRight, Search, Utensils, ShoppingBag, Briefcase, TrendingUp, Users, CheckCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import CalgaryBusinessGrid from "@/components/CalgaryBusinessGrid";
 import { BusinessService, BusinessCardData } from "@/services/businessService";
@@ -145,7 +145,7 @@ export default function Home() {
               <div className="max-w-6xl mx-auto mb-8">
                 <div className="bg-white rounded-xl shadow-lg p-6">
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    Search Results for "{searchQuery}" ({searchResults.length} found)
+                    Search Results for &quot;{searchQuery}&quot; ({searchResults.length} found)
                   </h2>
                   <CalgaryBusinessGrid businesses={searchResults} />
                   <div className="mt-6 text-center">
