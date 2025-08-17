@@ -41,3 +41,5 @@ DROP TRIGGER IF EXISTS update_neighborhoods_updated_at ON neighborhoods;
 -- - recent_calgary_businesses (view)
 -- - calgary_businesses_by_community (view)  
 -- - calgary_businesses_by_category (view)
+
+

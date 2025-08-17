@@ -80,17 +80,14 @@ export default function Header() {
             <Link href="/restaurants" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
               <Utensils className="w-4 h-4" />
               Restaurants
-              <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-semibold">12</span>
             </Link>
             <Link href="/retail" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
               <ShoppingBag className="w-4 h-4" />
               Retail
-              <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-semibold">8</span>
             </Link>
             <Link href="/services" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
               <Briefcase className="w-4 h-4" />
               Services
-              <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold">6</span>
             </Link>
             <Link href="/businesses" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
               <TrendingUp className="w-4 h-4" />
@@ -102,7 +99,7 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-3">
             <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
               <Bell className="w-4 h-4" />
-              5 New Today
+              New Today
             </button>
             <button 
               onClick={toggleSearch}
@@ -205,26 +202,17 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white">
             <div className="px-4 py-6 space-y-4">
-              <Link href="/restaurants" className="flex items-center justify-between p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                <div className="flex items-center gap-3">
-                  <Utensils className="w-5 h-5" />
-                  Restaurants
-                </div>
-                <span className="bg-red-100 text-red-700 text-sm px-2 py-1 rounded-full font-semibold">12</span>
+              <Link href="/restaurants" className="flex items-center gap-3 p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                <Utensils className="w-5 h-5" />
+                Restaurants
               </Link>
-              <Link href="/retail" className="flex items-center justify-between p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                <div className="flex items-center gap-3">
-                  <ShoppingBag className="w-5 h-5" />
-                  Retail
-                </div>
-                <span className="bg-blue-100 text-blue-700 text-sm px-2 py-1 rounded-full font-semibold">8</span>
+              <Link href="/retail" className="flex items-center gap-3 p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                <ShoppingBag className="w-5 h-5" />
+                Retail
               </Link>
-              <Link href="/services" className="flex items-center justify-between p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                <div className="flex items-center gap-3">
-                  <Briefcase className="w-5 h-5" />
-                  Services
-                </div>
-                <span className="bg-green-100 text-green-700 text-sm px-2 py-1 rounded-full font-semibold">6</span>
+              <Link href="/services" className="flex items-center gap-3 p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                <Briefcase className="w-5 h-5" />
+                Services
               </Link>
               <Link href="/businesses" className="flex items-center gap-3 p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
                 <TrendingUp className="w-5 h-5" />
@@ -233,7 +221,7 @@ export default function Header() {
               <div className="pt-4 border-t border-gray-200">
                 <button className="flex items-center gap-3 w-full p-3 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
                   <Bell className="w-5 h-5" />
-                  5 New Today
+                  New Today
                 </button>
               </div>
             </div>

@@ -400,16 +400,16 @@ export async function GET(request: NextRequest) {
   if (action === 'status') {
     // Get database statistics
     try {
-      const { data: totalCount } = await supabaseAdmin
+      const { count: totalCount } = await supabaseAdmin
         .from('calgary_businesses')
         .select('*', { count: 'exact', head: true })
 
-      const { data: recentCount } = await supabaseAdmin
+      const { count: recentCount } = await supabaseAdmin
         .from('calgary_businesses')
         .select('*', { count: 'exact', head: true })
         .gte('first_issued_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
 
-      const { data: consumerFacingCount } = await supabaseAdmin
+      const { count: consumerFacingCount } = await supabaseAdmin
         .from('calgary_businesses')
         .select('*', { count: 'exact', head: true })
         .eq('is_consumer_facing', true)
