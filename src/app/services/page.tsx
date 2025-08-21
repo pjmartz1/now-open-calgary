@@ -5,19 +5,19 @@ import { BusinessService } from '@/services/businessService'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'New Services Calgary 2024 | Latest Professional Services | Now Open Calgary',
-  description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC. Updated daily with the newest Calgary services.',
-  keywords: ['new services calgary', 'newest services calgary 2024', 'calgary professional services', 'new consultants calgary', 'latest services calgary', 'calgary service openings', 'YYC new services', 'fresh services calgary'],
+  title: 'New Services Calgary 2025 | Latest Professional Services | Now Open Calgary',
+  description: 'Discover 200+ new services in Calgary 2025! Fresh professional services, personal care, consultants & specialists opening in YYC. Updated daily with newest Calgary services.',
+  keywords: ['new services calgary', 'newest services calgary 2025', 'calgary professional services', 'new consultants calgary', 'latest services calgary', 'calgary service openings', 'YYC new services', 'fresh services calgary'],
   openGraph: {
-    title: 'New Services Calgary 2024 | Latest Professional Services',
-    description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC.',
+    title: 'New Services Calgary 2025 | Latest Professional Services',
+    description: 'Discover 200+ new services in Calgary 2025! Fresh professional services, personal care, consultants & specialists opening in YYC.',
     type: 'website',
     url: 'https://www.nowopencalgary.ca/services',
     siteName: 'Now Open Calgary'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'New Services Calgary 2024 | Latest Professional Services',
+    title: 'New Services Calgary 2025 | Latest Professional Services',
     description: 'Discover 200+ new services in Calgary! Fresh professional services, personal care, consultants & specialists opening in YYC.'
   },
   alternates: {

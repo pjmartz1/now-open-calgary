@@ -1,94 +1,126 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { Search, Filter, MapPin, Tag, ChevronDown } from 'lucide-react'
+import { Suspense } from 'react'
+import { Search, MapPin, Tag } from 'lucide-react'
 import CalgaryBusinessGrid from '@/components/CalgaryBusinessGrid'
-import { BusinessService, BusinessCardData } from '@/services/businessService'
-import { cn } from '@/lib/utils'
+import { BusinessService } from '@/services/businessService'
+import { Metadata } from 'next'
 
-export default function BusinessesPage() {
-  const [businesses, setBusinesses] = useState<BusinessCardData[]>([])
-  const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedCommunity, setSelectedCommunity] = useState('')
-  const [categories, setCategories] = useState<string[]>([])
-  const [communities, setCommunities] = useState<string[]>([])
-  const [showFilters, setShowFilters] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
+export const metadata: Metadata = {
+  title: 'Calgary Business Directory - All New Businesses | Now Open Calgary',
+  description: 'Browse all new businesses opening in Calgary. Find restaurants, shops, services, and more with our comprehensive Calgary business directory.',
+  alternates: {
+    canonical: 'https://www.nowopencalgary.ca/businesses'
+  }
+}
 
+interface Props {
+  searchParams: Promise<{
+    page?: string
+    search?: string
+    category?: string
+    community?: string
+  }>
+}
+
+async function BusinessListings({ 
+  page = 1, 
+  search, 
+  category, 
+  community 
+}: { 
+  page?: number
+  search?: string
+  category?: string
+  community?: string
+}) {
   const itemsPerPage = 20
+  const offset = (page - 1) * itemsPerPage
 
-  // Load filter options
-  useEffect(() => {
-    async function loadFilters() {
-      const [categoriesData, communitiesData] = await Promise.all([
-        BusinessService.getCalgaryCategories(),
-        BusinessService.getCalgaryCommunities()
-      ])
-      setCategories(categoriesData)
-      setCommunities(communitiesData)
-    }
-    loadFilters()
-  }, [])
+  const { businesses, total } = await BusinessService.getAllCalgaryBusinesses({
+    search: search || undefined,
+    category: category || undefined,
+    community: community || undefined,
+    limit: itemsPerPage,
+    offset
+  })
 
-  // Load businesses based on filters
-  useEffect(() => {
-    async function loadBusinesses() {
-      setLoading(true)
-      try {
-        const offset = (currentPage - 1) * itemsPerPage
-        const { businesses: data, total: totalCount } = await BusinessService.getAllCalgaryBusinesses({
-          search: searchQuery || undefined,
-          category: selectedCategory || undefined,
-          community: selectedCommunity || undefined,
-          limit: itemsPerPage,
-          offset
-        })
+  const totalPages = Math.ceil(total / itemsPerPage)
+  const hasNextPage = page < totalPages
+  const hasPrevPage = page > 1
 
-        if (currentPage === 1) {
-          setBusinesses(data)
-        } else {
-          setBusinesses(prev => [...prev, ...data])
-        }
+  return (
+    <>
+      <div className="mb-6">
+        <div className="text-center text-indigo-200">
+          <span className="font-semibold">{total}</span> businesses found
+          {search || category || community ? (
+            <div className="mt-2 text-sm">
+              {search && <span className="bg-indigo-500/20 px-2 py-1 rounded mr-2">Search: {search}</span>}
+              {category && <span className="bg-indigo-500/20 px-2 py-1 rounded mr-2">Category: {category}</span>}
+              {community && <span className="bg-indigo-500/20 px-2 py-1 rounded mr-2">Community: {community}</span>}
+            </div>
+          ) : null}
+        </div>
+      </div>
 
-        setTotal(totalCount)
-        setHasMore(data.length === itemsPerPage && offset + itemsPerPage < totalCount)
-      } catch (error) {
-        console.error('Error loading businesses:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+      <CalgaryBusinessGrid businesses={businesses} />
 
-    loadBusinesses()
-  }, [searchQuery, selectedCategory, selectedCommunity, currentPage])
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-12">
+          {hasPrevPage && (
+            <a
+              href={`/businesses?${new URLSearchParams({ 
+                ...(search && { search }),
+                ...(category && { category }),
+                ...(community && { community }),
+                page: (page - 1).toString()
+              }).toString()}`}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Previous
+            </a>
+          )}
+          
+          <span className="text-gray-600">
+            Page {page} of {totalPages}
+          </span>
+          
+          {hasNextPage && (
+            <a
+              href={`/businesses?${new URLSearchParams({ 
+                ...(search && { search }),
+                ...(category && { category }),
+                ...(community && { community }),
+                page: (page + 1).toString()
+              }).toString()}`}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Next
+            </a>
+          )}
+        </div>
+      )}
 
-  // Reset pagination when filters change
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [searchQuery, selectedCategory, selectedCommunity])
+      {/* Results Summary */}
+      <div className="text-center mt-8 text-gray-500 text-sm">
+        Showing {offset + 1} to {Math.min(offset + itemsPerPage, total)} of {total} businesses
+      </div>
+    </>
+  )
+}
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Search is handled by the useEffect above
-  }
+export default async function BusinessesPage({ searchParams }: Props) {
+  const params = await searchParams
+  const page = parseInt(params.page || '1')
+  const { search, category, community } = params
 
-  const clearFilters = () => {
-    setSearchQuery('')
-    setSelectedCategory('')
-    setSelectedCommunity('')
-  }
+  // Get filter options
+  const [categories, communities] = await Promise.all([
+    BusinessService.getCalgaryCategories(),
+    BusinessService.getCalgaryCommunities()
+  ])
 
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      setCurrentPage(prev => prev + 1)
-    }
-  }
-
-  const activeFiltersCount = [searchQuery, selectedCategory, selectedCommunity].filter(Boolean).length
+  const activeFiltersCount = [search, category, community].filter(Boolean).length
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,64 +134,39 @@ export default function BusinessesPage() {
             <p className="text-xl text-indigo-100 max-w-2xl mx-auto">
               Discover the newest businesses opening their doors in Calgary. Find restaurants, shops, services, and more.
             </p>
-            <div className="mt-6 text-indigo-200">
-              <span className="font-semibold">{total}</span> businesses found
-            </div>
+            
+            <Suspense fallback={
+              <div className="mt-6 text-indigo-200">Loading businesses...</div>
+            }>
+              <BusinessListings 
+                page={page} 
+                search={search} 
+                category={category} 
+                community={community} 
+              />
+            </Suspense>
           </div>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      {/* Search and Filters Form */}
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="mb-4">
+          <form method="GET" action="/businesses" className="space-y-4">
+            {/* Search Bar */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
+                name="search"
                 placeholder="Search businesses, locations, or categories..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                defaultValue={search}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg"
               />
             </div>
-          </form>
 
-          {/* Filter Toggle */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors",
-                showFilters 
-                  ? "bg-indigo-50 border-indigo-200 text-indigo-700" 
-                  : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-              )}
-            >
-              <Filter className="w-4 h-4" />
-              <span>Filters</span>
-              {activeFiltersCount > 0 && (
-                <span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">
-                  {activeFiltersCount}
-                </span>
-              )}
-              <ChevronDown className={cn("w-4 h-4 transition-transform", showFilters && "rotate-180")} />
-            </button>
-
-            {activeFiltersCount > 0 && (
-              <button
-                onClick={clearFilters}
-                className="text-sm text-gray-500 hover:text-gray-700 underline"
-              >
-                Clear all filters
-              </button>
-            )}
-          </div>
-
-          {/* Filter Options */}
-          {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 bg-gray-50 rounded-lg">
+            {/* Filters Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Category Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -167,14 +174,14 @@ export default function BusinessesPage() {
                   Category
                 </label>
                 <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  name="category"
+                  defaultValue={category}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="">All Categories</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
                     </option>
                   ))}
                 </select>
@@ -187,68 +194,56 @@ export default function BusinessesPage() {
                   Community
                 </label>
                 <select
-                  value={selectedCommunity}
-                  onChange={(e) => setSelectedCommunity(e.target.value)}
+                  name="community"
+                  defaultValue={community}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                   <option value="">All Communities</option>
-                  {communities.map((community) => (
-                    <option key={community} value={community}>
-                      {community}
+                  {communities.map((comm) => (
+                    <option key={comm} value={comm}>
+                      {comm}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
-          )}
+
+            <div className="flex justify-between items-center">
+              <button
+                type="submit"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+              >
+                Apply Filters
+              </button>
+
+              {activeFiltersCount > 0 && (
+                <a
+                  href="/businesses"
+                  className="text-sm text-gray-500 hover:text-gray-700 underline"
+                >
+                  Clear all filters
+                </a>
+              )}
+            </div>
+          </form>
         </div>
       </div>
 
-      {/* Business Grid */}
+      {/* Business Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {loading && businesses.length === 0 ? (
+        <Suspense fallback={
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading businesses...</p>
           </div>
-        ) : businesses.length === 0 ? (
-          <div className="text-center py-12">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No businesses found</h3>
-            <p className="text-gray-600 mb-4">
-              Try adjusting your search or filters to find more businesses.
-            </p>
-            {activeFiltersCount > 0 && (
-              <button
-                onClick={clearFilters}
-                className="text-indigo-600 hover:text-indigo-500 underline"
-              >
-                Clear all filters
-              </button>
-            )}
-          </div>
-        ) : (
-          <>
-            <CalgaryBusinessGrid businesses={businesses} />
-
-            {/* Load More Button */}
-            {hasMore && (
-              <div className="text-center mt-12">
-                <button
-                  onClick={loadMore}
-                  disabled={loading}
-                  className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
-                >
-                  {loading ? 'Loading...' : 'Load More Businesses'}
-                </button>
-              </div>
-            )}
-
-            {/* Results Summary */}
-            <div className="text-center mt-8 text-gray-500 text-sm">
-              Showing {businesses.length} of {total} businesses
-            </div>
-          </>
-        )}
+        }>
+          <BusinessListings 
+            page={page} 
+            search={search} 
+            category={category} 
+            community={community} 
+          />
+        </Suspense>
       </div>
     </div>
   )

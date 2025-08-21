@@ -25,6 +25,9 @@ function getCategoryColor(category: string | null): string {
     services: 'bg-green-100 text-green-700',
     healthcare: 'bg-purple-100 text-purple-700',
     entertainment: 'bg-yellow-100 text-yellow-700',
+    beauty: 'bg-pink-100 text-pink-700',
+    fitness: 'bg-orange-100 text-orange-700',
+    automotive: 'bg-slate-100 text-slate-700',
   }
   
   return categoryColors[category || 'other'] || 'bg-gray-100 text-gray-700'
@@ -65,21 +68,14 @@ export default function CalgaryBusinessGrid({
             href={`/business/${business.slug}`}
             className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-indigo-200"
           >
-            {/* Header with badges */}
-            <div className="p-6 pb-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight">
+            {/* Header with badges - Fixed uniform layout */}
+            <div className="p-6 h-full flex flex-col">
+              {/* Title and New Badge Row - Fixed Height */}
+              <div className="flex items-start justify-between mb-4 min-h-[2.5rem]">
+                <div className="flex-1 pr-3">
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight line-clamp-2">
                     {business.tradename}
                   </h3>
-                  {business.category && (
-                    <span className={cn(
-                      "inline-block px-2 py-1 rounded-full text-xs font-medium mt-2",
-                      getCategoryColor(business.category)
-                    )}>
-                      {business.category.charAt(0).toUpperCase() + business.category.slice(1)}
-                    </span>
-                  )}
                 </div>
                 
                 {(() => {
@@ -87,7 +83,7 @@ export default function CalgaryBusinessGrid({
                   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
                   const isNew = new Date(business.first_issued_date) >= oneWeekAgo
                   return isNew ? (
-                    <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ml-2">
+                    <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 flex-shrink-0">
                       <Sparkles className="w-3 h-3" />
                       New!
                     </div>
@@ -95,10 +91,22 @@ export default function CalgaryBusinessGrid({
                 })()}
               </div>
 
-              {/* Location */}
-              <div className="flex items-center text-gray-600 text-sm mb-3">
-                <MapPin className="w-4 h-4 mr-2 flex-shrink-0 text-gray-400" />
-                <span className="truncate">
+              {/* Category Badge - Fixed Height */}
+              <div className="mb-4 h-6 flex items-start">
+                {business.category && (
+                  <span className={cn(
+                    "inline-block px-2 py-1 rounded-full text-xs font-medium",
+                    getCategoryColor(business.category)
+                  )}>
+                    {business.category.charAt(0).toUpperCase() + business.category.slice(1)}
+                  </span>
+                )}
+              </div>
+
+              {/* Location - Fixed Height */}
+              <div className="flex items-start text-gray-600 text-sm mb-4 min-h-[1.25rem]">
+                <MapPin className="w-4 h-4 mr-2 flex-shrink-0 text-gray-400 mt-0.5" />
+                <span className="line-clamp-1">
                   {business.address}
                   {business.community && (
                     <span className="text-gray-500">, {business.community}</span>
@@ -106,15 +114,15 @@ export default function CalgaryBusinessGrid({
                 </span>
               </div>
 
-              {/* License info */}
-              <div className="text-sm text-gray-500 mb-4 line-clamp-2">
+              {/* License info - Fixed Height */}
+              <div className="text-sm text-gray-500 mb-4 line-clamp-2 min-h-[2.5rem] flex-grow">
                 {business.license_type}
               </div>
 
-              {/* Bottom info */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+              {/* Bottom info - Fixed Height at bottom */}
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                 <div className="flex items-center text-gray-500 text-xs">
-                  <Calendar className="w-3 h-3 mr-1" />
+                  <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span>Opened {formatDate(business.first_issued_date)}</span>
                 </div>
                 

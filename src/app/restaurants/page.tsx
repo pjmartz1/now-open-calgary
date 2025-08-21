@@ -1,23 +1,24 @@
 import { Metadata } from 'next'
 import { Utensils, MapPin, Calendar } from 'lucide-react'
 import CalgaryBusinessGrid from '@/components/CalgaryBusinessGrid'
+import Breadcrumbs from '@/components/Breadcrumbs'
 import { BusinessService } from '@/services/businessService'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'New Restaurants Calgary 2024 | Latest Calgary Dining | Now Open Calgary',
-  description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC. Updated daily with the newest Calgary restaurants.',
-  keywords: ['new restaurants calgary', 'newest restaurants calgary 2024', 'calgary dining', 'new cafes calgary', 'latest restaurants calgary', 'calgary restaurant openings', 'YYC new restaurants', 'fresh dining calgary'],
+  title: 'New Restaurants Calgary 2025 | Latest Calgary Dining | Now Open Calgary',
+  description: 'Discover 150+ new restaurants in Calgary 2025! Fresh cafes, trendy dining spots & hot new eateries opening in YYC. Updated daily with newest Calgary restaurants.',
+  keywords: ['new restaurants calgary', 'newest restaurants calgary 2025', 'calgary dining', 'new cafes calgary', 'latest restaurants calgary', 'calgary restaurant openings', 'YYC new restaurants', 'fresh dining calgary'],
   openGraph: {
-    title: 'New Restaurants Calgary 2024 | Latest Calgary Dining | Now Open Calgary',
-    description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC.',
+    title: 'New Restaurants Calgary 2025 | Latest Calgary Dining | Now Open Calgary',
+    description: 'Discover 150+ new restaurants in Calgary 2025! Fresh cafes, trendy dining spots & hot new eateries opening in YYC.',
     type: 'website',
     url: 'https://www.nowopencalgary.ca/restaurants',
     siteName: 'Now Open Calgary'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'New Restaurants Calgary 2024 | Latest Calgary Dining',
+    title: 'New Restaurants Calgary 2025 | Latest Calgary Dining',
     description: 'Discover 150+ new restaurants in Calgary! Fresh cafes, trendy dining spots & hot new eateries opening in YYC.'
   },
   alternates: {
@@ -36,6 +37,16 @@ export default async function RestaurantsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Breadcrumbs */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <Breadcrumbs items={[
+            { label: 'Categories', href: '/businesses' },
+            { label: 'Restaurants', current: true }
+          ]} />
+        </div>
+      </div>
+      
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-red-600 via-pink-600 to-rose-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -54,20 +65,20 @@ export default async function RestaurantsPage() {
             </p>
             
             <div className="flex flex-wrap justify-center gap-6 text-red-100">
-              <div className="flex items-center">
+              <div className="flex items-center bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full">
                 <Utensils className="w-5 h-5 mr-2" />
                 <span className="font-semibold">{restaurants.length}</span>
                 <span className="ml-1">restaurants found</span>
               </div>
               {recentCount > 0 && (
-                <div className="flex items-center">
+                <div className="flex items-center bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full">
                   <Calendar className="w-5 h-5 mr-2" />
                   <span className="font-semibold">{recentCount}</span>
                   <span className="ml-1">opened this week</span>
                 </div>
               )}
               {communities > 0 && (
-                <div className="flex items-center">
+                <div className="flex items-center bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full">
                   <MapPin className="w-5 h-5 mr-2" />
                   <span className="font-semibold">{communities}</span>
                   <span className="ml-1">communities</span>
@@ -92,19 +103,31 @@ export default async function RestaurantsPage() {
               href="/retail"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
-              New Shops
+              Retail
             </Link>
             <Link
               href="/services"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
-              New Services
+              Services
             </Link>
             <Link
-              href="/businesses"
+              href="/healthcare"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
-              All Categories
+              Healthcare
+            </Link>
+            <Link
+              href="/beauty"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Beauty
+            </Link>
+            <Link
+              href="/fitness"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Fitness
             </Link>
           </div>
         </div>

@@ -1,12 +1,33 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
-import { MapPin, Calendar, ExternalLink, Eye, ArrowLeft, Navigation } from 'lucide-react'
-import Link from 'next/link'
+import { MapPin, Calendar, ExternalLink, Eye, Navigation, Share2, Bookmark, Star } from 'lucide-react'
 import { BusinessService } from '@/services/businessService'
 import { CalgaryBusiness } from '@/types/business'
+import Breadcrumbs from '@/components/Breadcrumbs'
+import { getBusinessBreadcrumbs } from '@/lib/breadcrumb-utils'
+import RelatedBusinesses from '@/components/RelatedBusinesses'
+import MapPlaceholder from '@/components/MapPlaceholder'
 
 interface Props {
   params: Promise<{ slug: string }>
+}
+
+// Enable static generation for better SEO and performance
+export async function generateStaticParams() {
+  try {
+    // Generate static params for the most recent businesses
+    const { businesses } = await BusinessService.getAllCalgaryBusinesses({
+      limit: 1000, // Generate static pages for top 1000 businesses
+      offset: 0
+    })
+    
+    return businesses.map((business) => ({
+      slug: business.slug,
+    }))
+  } catch (error) {
+    console.error('Error generating static params for business pages:', error)
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -25,7 +46,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     'retail': 'Shop',
     'services': 'Service Business',
     'healthcare': 'Healthcare Provider',
-    'entertainment': 'Entertainment Venue'
+    'entertainment': 'Entertainment Venue',
+    'beauty': 'Beauty Service',
+    'fitness': 'Fitness Center',
+    'automotive': 'Automotive Service'
   }
   
   const businessType = categoryMap[business.category || ''] || 'Business'
@@ -90,6 +114,9 @@ function getCategoryColor(category: string | null): string {
     services: 'bg-green-100 text-green-700 border-green-200',
     healthcare: 'bg-purple-100 text-purple-700 border-purple-200',
     entertainment: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    beauty: 'bg-pink-100 text-pink-700 border-pink-200',
+    fitness: 'bg-orange-100 text-orange-700 border-orange-200',
+    automotive: 'bg-slate-100 text-slate-700 border-slate-200',
   }
   
   return categoryColors[category || 'other'] || 'bg-gray-100 text-gray-700 border-gray-200'
@@ -114,7 +141,10 @@ function BusinessSchema({ business }: { business: CalgaryBusiness }) {
     'retail': 'Store',
     'services': 'LocalBusiness',
     'healthcare': 'MedicalOrganization',
-    'entertainment': 'EntertainmentBusiness'
+    'entertainment': 'EntertainmentBusiness',
+    'beauty': 'BeautySalon',
+    'fitness': 'SportsActivityLocation',
+    'automotive': 'AutomotiveBusiness'
   }
   
   const schemaType = businessTypeMap[business.category || ''] || 'LocalBusiness'
@@ -174,16 +204,10 @@ export default async function BusinessPage({ params }: Props) {
       <BusinessSchema business={business} />
       
       <div className="min-h-screen bg-gray-50">
-        {/* Navigation */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Link
-              href="/businesses"
-              className="inline-flex items-center text-gray-600 hover:text-indigo-600 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to all businesses
-            </Link>
+        {/* Breadcrumbs */}
+        <div className="bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Breadcrumbs items={getBusinessBreadcrumbs(business.tradename, business.category || undefined)} />
           </div>
         </div>
 
@@ -229,12 +253,22 @@ export default async function BusinessPage({ params }: Props) {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Business Information</h2>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                      <Share2 className="w-5 h-5" />
+                    </button>
+                    <button className="p-2 text-gray-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
+                      <Bookmark className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
                 
                 <div className="space-y-6">
                   {/* License Type */}
@@ -317,8 +351,9 @@ export default async function BusinessPage({ params }: Props) {
             </div>
 
             {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-8">
+            <div className="lg:col-span-1 space-y-6">
+              {/* Quick Stats */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
                 
                 <div className="space-y-4">
@@ -354,7 +389,45 @@ export default async function BusinessPage({ params }: Props) {
                   </p>
                 </div>
               </div>
+              
+              {/* Reviews Placeholder */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Customer Reviews</h3>
+                <div className="text-center py-6">
+                  <Star className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 text-sm mb-3">Reviews coming soon!</p>
+                  <p className="text-xs text-gray-400">We&apos;re working on adding customer reviews to help you make informed decisions.</p>
+                </div>
+              </div>
+              
+              {/* Business Claim */}
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Own this business?</h3>
+                <p className="text-sm text-gray-600 mb-4">Claim your business profile to manage your information and connect with customers.</p>
+                <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                  Claim This Business
+                </button>
+              </div>
             </div>
+          </div>
+          
+          {/* Map Section */}
+          <div className="mt-8">
+            <MapPlaceholder 
+              address={business.address}
+              businessName={business.tradename}
+              latitude={business.latitude}
+              longitude={business.longitude}
+            />
+          </div>
+          
+          {/* Related Businesses */}
+          <div className="mt-16">
+            <RelatedBusinesses 
+              currentBusinessId={business.id} 
+              category={business.category || undefined} 
+              community={business.community || undefined}
+            />
           </div>
         </div>
       </div>

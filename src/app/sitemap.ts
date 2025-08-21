@@ -36,14 +36,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily' as const,
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/healthcare`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/beauty`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/fitness`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/entertainment`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/automotive`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    },
   ]
 
-  // Get all businesses for dynamic sitemap entries
+  // Get businesses for main sitemap (limited to most recent/important)
   let businessPages: MetadataRoute.Sitemap = []
   
   try {
+    // Only include most recent 500 businesses in main sitemap
+    // This prevents sitemap from being too large and timing out
     const { businesses } = await BusinessService.getAllCalgaryBusinesses({
-      limit: 1000, // Get all businesses for sitemap
+      limit: 500, // Reduced from 1000 to prevent timeout issues
       offset: 0
     })
 

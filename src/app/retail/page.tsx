@@ -5,19 +5,19 @@ import { BusinessService } from '@/services/businessService'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'New Shops Calgary 2024 | Latest Retail Stores & Boutiques | Now Open Calgary',
-  description: 'Discover 100+ new shops in Calgary! Fresh boutiques, trendy stores & hot new retail openings in YYC. Updated daily with the newest Calgary shopping destinations.',
-  keywords: ['new shops calgary', 'newest stores calgary 2024', 'calgary retail', 'new boutiques calgary', 'latest shops calgary', 'calgary store openings', 'YYC new retail', 'fresh shopping calgary'],
+  title: 'New Shops Calgary 2025 | Latest Retail Stores & Boutiques | Now Open Calgary',
+  description: 'Discover 100+ new shops in Calgary 2025! Fresh boutiques, trendy stores & hot new retail openings in YYC. Updated daily with newest Calgary shopping destinations.',
+  keywords: ['new shops calgary', 'newest stores calgary 2025', 'calgary retail', 'new boutiques calgary', 'latest shops calgary', 'calgary store openings', 'YYC new retail', 'fresh shopping calgary'],
   openGraph: {
-    title: 'New Shops Calgary 2024 | Latest Retail Stores & Boutiques',
-    description: 'Discover 100+ new shops in Calgary! Fresh boutiques, trendy stores & hot new retail openings in YYC.',
+    title: 'New Shops Calgary 2025 | Latest Retail Stores & Boutiques',
+    description: 'Discover 100+ new shops in Calgary 2025! Fresh boutiques, trendy stores & hot new retail openings in YYC.',
     type: 'website',
     url: 'https://www.nowopencalgary.ca/retail',
     siteName: 'Now Open Calgary'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'New Shops Calgary 2024 | Latest Retail Stores & Boutiques',
+    title: 'New Shops Calgary 2025 | Latest Retail Stores & Boutiques',
     description: 'Discover 100+ new shops in Calgary! Fresh boutiques, trendy stores & hot new retail openings in YYC.'
   },
   alternates: {

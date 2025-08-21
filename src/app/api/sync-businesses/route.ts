@@ -414,12 +414,26 @@ export async function GET(request: NextRequest) {
         .select('*', { count: 'exact', head: true })
         .eq('is_consumer_facing', true)
 
+      // Get category breakdown
+      const { data: categoryData } = await supabaseAdmin
+        .from('calgary_businesses')
+        .select('category')
+
+      const categoryBreakdown: Record<string, number> = {}
+      if (categoryData) {
+        categoryData.forEach((business: { category: unknown }) => {
+          const category = (business.category as string) || 'unknown'
+          categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1
+        })
+      }
+
       return NextResponse.json({
         success: true,
         data: {
           total_businesses: totalCount,
           recent_businesses: recentCount,
           consumer_facing_businesses: consumerFacingCount,
+          category_breakdown: categoryBreakdown,
           last_updated: new Date().toISOString()
         }
       })
