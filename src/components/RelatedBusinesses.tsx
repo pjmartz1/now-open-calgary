@@ -1,6 +1,3 @@
-'use client'
-
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowRight, MapPin, Calendar, Sparkles } from 'lucide-react'
 import { BusinessService, BusinessCardData } from '@/services/businessService'
@@ -24,7 +21,7 @@ function getCategoryColor(category: string | null): string {
     fitness: 'bg-orange-100 text-orange-700',
     automotive: 'bg-slate-100 text-slate-700',
   }
-  
+
   return categoryColors[category || 'other'] || 'bg-gray-100 text-gray-700'
 }
 
@@ -36,83 +33,62 @@ function formatDate(dateString: string): string {
   })
 }
 
-export default function RelatedBusinesses({ 
-  currentBusinessId, 
-  category, 
-  community, 
-  className 
-}: RelatedBusinessesProps) {
-  const [relatedBusinesses, setRelatedBusinesses] = useState<BusinessCardData[]>([])
-  const [loading, setLoading] = useState(true)
+// Server-side data fetching function
+async function getRelatedBusinessesData(
+  currentBusinessId: string,
+  category?: string,
+  community?: string
+): Promise<BusinessCardData[]> {
+  try {
+    let businesses: BusinessCardData[] = []
 
-  useEffect(() => {
-    async function loadRelatedBusinesses() {
-      setLoading(true)
-      try {
-        let businesses: BusinessCardData[] = []
-
-        // First try to get businesses from the same category
-        if (category) {
-          businesses = await BusinessService.getCalgaryBusinessesByCategory(category, 8)
-        }
-
-        // If not enough businesses from category, get more from the same community
-        if (businesses.length < 6 && community) {
-          const communityBusinesses = await BusinessService.getAllCalgaryBusinesses({
-            community,
-            limit: 8
-          })
-          // Merge and deduplicate
-          const existingIds = new Set(businesses.map(b => b.id))
-          const additionalBusinesses = communityBusinesses.businesses.filter(
-            b => !existingIds.has(b.id)
-          )
-          businesses = [...businesses, ...additionalBusinesses]
-        }
-
-        // If still not enough, get general recent businesses
-        if (businesses.length < 6) {
-          const recentBusinesses = await BusinessService.getCalgaryFeaturedBusinesses(8)
-          const existingIds = new Set(businesses.map(b => b.id))
-          const additionalBusinesses = recentBusinesses.filter(
-            b => !existingIds.has(b.id)
-          )
-          businesses = [...businesses, ...additionalBusinesses]
-        }
-
-        // Remove the current business and limit to 6 results
-        const filtered = businesses
-          .filter(b => b.id !== currentBusinessId)
-          .slice(0, 6)
-
-        setRelatedBusinesses(filtered)
-      } catch (error) {
-        console.error('Error loading related businesses:', error)
-        setRelatedBusinesses([])
-      } finally {
-        setLoading(false)
-      }
+    // First try to get businesses from the same category
+    if (category) {
+      businesses = await BusinessService.getCalgaryBusinessesByCategory(category, 8)
     }
 
-    loadRelatedBusinesses()
-  }, [currentBusinessId, category, community])
+    // If not enough businesses from category, get more from the same community
+    if (businesses.length < 6 && community) {
+      const communityBusinesses = await BusinessService.getAllCalgaryBusinesses({
+        community,
+        limit: 8
+      })
+      // Merge and deduplicate
+      const existingIds = new Set(businesses.map(b => b.id))
+      const additionalBusinesses = communityBusinesses.businesses.filter(
+        b => !existingIds.has(b.id)
+      )
+      businesses = [...businesses, ...additionalBusinesses]
+    }
 
-  if (loading) {
-    return (
-      <div className={cn("space-y-4", className)}>
-        <h3 className="text-xl font-bold text-gray-900">Related Businesses</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="bg-white rounded-lg p-4 animate-pulse border border-gray-200">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
+    // If still not enough, get general recent businesses
+    if (businesses.length < 6) {
+      const recentBusinesses = await BusinessService.getCalgaryFeaturedBusinesses(8)
+      const existingIds = new Set(businesses.map(b => b.id))
+      const additionalBusinesses = recentBusinesses.filter(
+        b => !existingIds.has(b.id)
+      )
+      businesses = [...businesses, ...additionalBusinesses]
+    }
+
+    // Remove the current business and limit to 6 results
+    return businesses
+      .filter(b => b.id !== currentBusinessId)
+      .slice(0, 6)
+  } catch (error) {
+    console.error('Error loading related businesses:', error)
+    return []
   }
+}
+
+export default async function RelatedBusinesses({
+  currentBusinessId,
+  category,
+  community,
+  className
+}: RelatedBusinessesProps) {
+  // Fetch data server-side
+  const relatedBusinesses = await getRelatedBusinessesData(currentBusinessId, category, community)
 
   if (relatedBusinesses.length === 0) {
     return null

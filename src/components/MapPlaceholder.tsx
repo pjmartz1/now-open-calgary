@@ -1,5 +1,3 @@
-'use client'
-
 import { MapPin, Navigation, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
