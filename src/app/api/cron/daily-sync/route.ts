@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
       },
       body: JSON.stringify({
         mode: 'recent',
-        daysBack: 7, // Sync businesses from last week to catch any updates
-        limit: 500,
+        daysBack: 30, // Sync businesses from last 30 days to catch any missed updates
+        limit: 1000,
         dryRun: false
       })
     })
