@@ -5,8 +5,18 @@ import { BusinessService } from '@/services/businessService'
 import { CalgaryBusiness } from '@/types/business'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import { getBusinessBreadcrumbs } from '@/lib/breadcrumb-utils'
-import RelatedBusinesses from '@/components/RelatedBusinesses'
-import MapPlaceholder from '@/components/MapPlaceholder'
+import dynamic from 'next/dynamic'
+
+// Dynamically import client components to prevent SSR issues
+const RelatedBusinesses = dynamic(() => import('@/components/RelatedBusinesses'), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>
+})
+
+const MapPlaceholder = dynamic(() => import('@/components/MapPlaceholder'), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
+})
 
 interface Props {
   params: Promise<{ slug: string }>
