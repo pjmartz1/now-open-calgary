@@ -11,7 +11,7 @@ interface CacheEntry<T> {
 }
 
 class EnhancedQueryCache {
-  private cache = new Map<string, CacheEntry<any>>()
+  private cache = new Map<string, CacheEntry<unknown>>()
   private hitCount = 0
   private missCount = 0
 

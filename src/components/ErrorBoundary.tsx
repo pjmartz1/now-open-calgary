@@ -1,7 +1,7 @@
 'use client'
 
 import React, { Component, ReactNode } from 'react'
-import { AlertTriangle, RefreshCw, Home, ArrowLeft } from 'lucide-react'
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
 
 interface Props {
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </h2>
             
             <p className="text-gray-600 mb-6">
-              We encountered an unexpected error while loading this content. Don't worry, this has been logged and we're working to fix it.
+              We encountered an unexpected error while loading this content. Don&apos;t worry, this has been logged and we&apos;re working to fix it.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -134,7 +134,7 @@ export function BusinessLoadingErrorBoundary({ children }: { children: ReactNode
             Failed to Load Businesses
           </h3>
           <p className="text-gray-600 mb-4">
-            We're having trouble loading the business listings. This could be a temporary network issue.
+            We&apos;re having trouble loading the business listings. This could be a temporary network issue.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button

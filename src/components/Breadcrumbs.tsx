@@ -97,7 +97,7 @@ export default function Breadcrumbs({ items, className }: BreadcrumbsProps) {
                   {item.href && <meta itemProp="item" content={`https://www.nowopencalgary.ca${item.href}`} />}
                 </>
               )}
-              <meta itemProp="position" content={index + 2} />
+              <meta itemProp="position" content={String(index + 2)} />
             </li>
           ))}
         </ol>
