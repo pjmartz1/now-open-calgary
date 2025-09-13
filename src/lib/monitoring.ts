@@ -9,7 +9,7 @@ export interface ErrorContext {
   page?: string
   component?: string
   action?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface PerformanceMetrics {
@@ -161,7 +161,7 @@ export class MonitoringService {
   /**
    * Add breadcrumb for debugging
    */
-  static addBreadcrumb(message: string, category: string, data?: any) {
+  static addBreadcrumb(message: string, category: string, data?: unknown) {
     if (typeof window !== 'undefined' || process.env.NODE_ENV === 'production') {
       Sentry.addBreadcrumb({
         message,
@@ -195,11 +195,11 @@ export class MonitoringService {
 }
 
 // Performance monitoring utilities
-export const withPerformanceMonitoring = <T extends (...args: any[]) => Promise<any>>(
+export const withPerformanceMonitoring = <T extends (...args: unknown[]) => Promise<any>>(
   fn: T,
   name: string
 ): T => {
-  return (async (...args: any[]) => {
+  return (async (...args: unknown[]) => {
     const startTime = Date.now()
     const transaction = MonitoringService.startTransaction(name)
     
@@ -243,7 +243,7 @@ export const usePerformanceMonitoring = (componentName: string) => {
     )
   }
 
-  const trackUserInteraction = (interaction: string, data?: any) => {
+  const trackUserInteraction = (interaction: string, data?: unknown) => {
     MonitoringService.trackUserAction(interaction, {
       component: componentName,
       ...data

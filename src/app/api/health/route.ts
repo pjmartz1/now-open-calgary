@@ -2,15 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { MonitoringService } from '@/lib/monitoring'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const startTime = Date.now()
-  const checks: Record<string, any> = {}
+  const checks: Record<string, unknown> = {}
   let overallStatus = 'healthy'
   
   try {
     // 1. Database connectivity check
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('calgary_businesses')
         .select('id')
         .limit(1)
