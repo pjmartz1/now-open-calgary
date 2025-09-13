@@ -17,23 +17,23 @@ interface Props {
   }>
 }
 
-// Enable static generation for better SEO and performance
-export async function generateStaticParams() {
-  try {
-    // Generate static params for the most recent businesses
-    const { businesses } = await BusinessService.getAllCalgaryBusinesses({
-      limit: 1000, // Generate static pages for top 1000 businesses
-      offset: 0
-    })
-    
-    return businesses.map((business) => ({
-      slug: business.slug,
-    }))
-  } catch (error) {
-    console.error('Error generating static params for business pages:', error)
-    return []
-  }
-}
+// Temporarily disable static generation to debug 500 errors
+// export async function generateStaticParams() {
+//   try {
+//     // Generate static params for the most recent businesses
+//     const { businesses } = await BusinessService.getAllCalgaryBusinesses({
+//       limit: 1000, // Generate static pages for top 1000 businesses
+//       offset: 0
+//     })
+//
+//     return businesses.map((business) => ({
+//       slug: business.slug,
+//     }))
+//   } catch (error) {
+//     console.error('Error generating static params for business pages:', error)
+//     return []
+//   }
+// }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
