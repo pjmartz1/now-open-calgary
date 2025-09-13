@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { Search, MapPin, Tag } from 'lucide-react'
 import CalgaryBusinessGrid from '@/components/CalgaryBusinessGrid'
 import { BusinessGridSkeleton } from '@/components/BusinessCardSkeleton'
-import { BusinessLoadingErrorBoundary, SearchErrorBoundary } from '@/components/ErrorBoundary'
+import { BusinessLoadingErrorBoundary } from '@/components/ErrorBoundary'
 import { BusinessService } from '@/services/businessService'
 import { Metadata } from 'next'
 

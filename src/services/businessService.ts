@@ -25,7 +25,7 @@ class QueryCache {
       this.cache.delete(key)
       return null
     }
-    return entry.data
+    return entry.data as T
   }
 
   clear() {
@@ -224,7 +224,7 @@ export class BusinessService {
         return sortedCategories
       }
 
-      const categories = data?.categories || []
+      const categories = (data as { categories?: string[] })?.categories || []
       // Cache for 15 minutes
       cache.set(cacheKey, categories, 15 * 60 * 1000)
       return categories
@@ -269,7 +269,7 @@ export class BusinessService {
         return sortedCommunities
       }
 
-      const communities = data?.communities || []
+      const communities = (data as { communities?: string[] })?.communities || []
       // Cache for 15 minutes
       cache.set(cacheKey, communities, 15 * 60 * 1000)
       return communities
