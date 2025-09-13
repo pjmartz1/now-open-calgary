@@ -26,25 +26,34 @@ const CATEGORY_MAPPINGS = {
   restaurants: [
     'restaurant', 'cafe', 'coffee', 'pizza', 'bar', 'pub', 'grill', 'bistro',
     'deli', 'bakery', 'food truck', 'catering', 'dining', 'eatery', 'kitchen',
-    'brewery', 'winery', 'lounge', 'tavern'
+    'brewery', 'winery', 'lounge', 'tavern', 'food service'
+  ],
+  beauty: [
+    'salon', 'spa', 'nail', 'barber', 'barbershop', 'hair', 'beauty', 'massage',
+    'aesthetics', 'cosmetic', 'manicure', 'pedicure', 'waxing', 'facial',
+    'personal service', 'lustre', 'denim and smith'
   ],
   retail: [
     'retail', 'store', 'shop', 'boutique', 'market', 'pharmacy', 'grocery',
     'clothing', 'fashion', 'electronics', 'furniture', 'automotive', 'gas station',
-    'convenience', 'jewelry', 'books', 'sports', 'toys', 'hardware'
+    'convenience', 'jewelry', 'books', 'sports', 'toys', 'hardware', 'dealer'
   ],
-  services: [
-    'salon', 'spa', 'fitness', 'gym', 'clinic', 'dental', 'medical', 'law',
-    'accounting', 'consulting', 'repair', 'cleaning', 'laundry', 'insurance',
-    'real estate', 'photography', 'veterinary', 'childcare', 'education'
+  fitness: [
+    'fitness', 'gym', 'yoga', 'pilates', 'crossfit', 'martial arts', 'dance',
+    'recreation', 'sports club', 'wellness'
   ],
   healthcare: [
     'medical', 'dental', 'clinic', 'hospital', 'pharmacy', 'optometry',
-    'physiotherapy', 'chiropractic', 'massage', 'counseling', 'therapy'
+    'physiotherapy', 'chiropractic', 'counseling', 'therapy'
+  ],
+  services: [
+    'law', 'accounting', 'consulting', 'repair', 'cleaning', 'laundry', 'insurance',
+    'real estate', 'photography', 'veterinary', 'childcare', 'education',
+    'professional', 'business'
   ],
   entertainment: [
     'entertainment', 'theater', 'cinema', 'arcade', 'bowling', 'casino',
-    'nightclub', 'comedy', 'music', 'events', 'recreation'
+    'nightclub', 'comedy', 'music', 'events'
   ]
 }
 

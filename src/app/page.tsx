@@ -4,14 +4,37 @@ import { useState, useEffect } from "react";
 import { MapPin, ArrowRight, Utensils, ShoppingBag, Briefcase, TrendingUp, Users, CheckCircle, Sparkles, Heart, Music, Car, Dumbbell } from "lucide-react";
 import Link from "next/link";
 import CalgaryBusinessGrid from "@/components/CalgaryBusinessGrid";
+import { BusinessGridSkeleton } from "@/components/BusinessCardSkeleton";
+import { BusinessLoadingErrorBoundary } from "@/components/ErrorBoundary";
 import { BusinessService, BusinessCardData } from "@/services/businessService";
 
 export default function Home() {
   const [featuredBusinesses, setFeaturedBusinesses] = useState<BusinessCardData[]>([]);
+  const [newThisWeekBusinesses, setNewThisWeekBusinesses] = useState<BusinessCardData[]>([]);
+  const [totalBusinessCount, setTotalBusinessCount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingWeekly, setIsLoadingWeekly] = useState(true);
 
-  // Load featured businesses on component mount
+  // Load featured businesses and total count on component mount
   useEffect(() => {
-    BusinessService.getCalgaryFeaturedBusinesses(12).then(setFeaturedBusinesses);
+    Promise.all([
+      BusinessService.getCalgaryFeaturedBusinesses(12),
+      BusinessService.getCalgaryNewThisWeekBusinesses(6),
+      BusinessService.getAllCalgaryBusinesses({ limit: 1, offset: 0 })
+    ])
+      .then(([businesses, weeklyBusinesses, { total }]) => {
+        setFeaturedBusinesses(businesses);
+        setNewThisWeekBusinesses(weeklyBusinesses);
+        setTotalBusinessCount(total);
+        setIsLoading(false);
+        setIsLoadingWeekly(false);
+      })
+      .catch(() => {
+        // Fallback to a reasonable estimate if API fails
+        setTotalBusinessCount(7000);
+        setIsLoading(false);
+        setIsLoadingWeekly(false);
+      });
   }, []);
 
   return (
@@ -46,7 +69,9 @@ export default function Home() {
               </div>
               <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
                 <Users className="w-4 h-4 text-blue-600" />
-                <span className="text-xs md:text-sm font-medium text-gray-700">2,100+ Businesses Listed</span>
+                <span className="text-xs md:text-sm font-medium text-gray-700">
+                  {totalBusinessCount > 0 ? `${totalBusinessCount.toLocaleString()}+ Businesses Listed` : 'Loading...'}
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
                 <CheckCircle className="w-4 h-4 text-indigo-600" />
@@ -115,6 +140,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* New This Week Section */}
+      {newThisWeekBusinesses.length > 0 && (
+        <section className="py-16 bg-gradient-to-r from-orange-50 to-amber-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-2 rounded-full font-semibold text-sm mb-4">
+                <Sparkles className="w-4 h-4" />
+                🔥 HOT NEW OPENINGS
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                New This Week
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Fresh businesses that just opened their doors in the past 7 days. Be the first to discover them!
+              </p>
+            </div>
+            <BusinessLoadingErrorBoundary>
+              {isLoadingWeekly ? (
+                <BusinessGridSkeleton count={6} />
+              ) : (
+                <CalgaryBusinessGrid businesses={newThisWeekBusinesses} />
+              )}
+            </BusinessLoadingErrorBoundary>
+            {newThisWeekBusinesses.length > 0 && (
+              <div className="text-center mt-8">
+                <Link href="/businesses" className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-medium hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                  View All Recent Openings
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* Featured Businesses Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -126,7 +186,13 @@ export default function Home() {
               Discover the latest and most exciting new businesses opening their doors in Calgary
             </p>
           </div>
-          <CalgaryBusinessGrid businesses={featuredBusinesses} />
+          <BusinessLoadingErrorBoundary>
+            {isLoading ? (
+              <BusinessGridSkeleton count={12} />
+            ) : (
+              <CalgaryBusinessGrid businesses={featuredBusinesses} />
+            )}
+          </BusinessLoadingErrorBoundary>
         </div>
       </section>
 

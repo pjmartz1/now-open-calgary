@@ -89,6 +89,52 @@ export default async function RestaurantsPage() {
         </div>
       </div>
 
+      {/* Inline Search Section */}
+      <div className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Find Your Perfect Restaurant</h2>
+            <p className="text-gray-600">Search through Calgary's newest dining establishments</p>
+          </div>
+          
+          <form method="GET" action="/businesses" className="max-w-4xl mx-auto">
+            <input type="hidden" name="category" value="restaurants" />
+            <div className="relative">
+              <Utensils className="absolute left-6 top-1/2 transform -translate-y-1/2 text-red-500 w-6 h-6" />
+              <input
+                type="search"
+                name="search"
+                placeholder="Search restaurants by name, cuisine, or location..."
+                className="w-full pl-16 pr-32 py-4 text-lg border-2 border-red-200 rounded-2xl focus:ring-4 focus:ring-red-300 focus:border-red-500 shadow-lg bg-white/90 backdrop-blur-sm transition-all duration-300"
+                aria-label="Search restaurants in Calgary"
+              />
+              <button 
+                type="submit"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+              >
+                Search
+              </button>
+            </div>
+            
+            {/* Quick search suggestions */}
+            <div className="mt-6 flex flex-wrap gap-3 justify-center">
+              <span className="text-sm text-gray-600 font-medium">Popular searches:</span>
+              {['pizza', 'sushi', 'indian', 'italian', 'coffee', 'breakfast', 'steakhouse', 'patio'].map((term) => (
+                <button
+                  key={term}
+                  type="submit"
+                  name="search"
+                  value={term}
+                  className="px-4 py-2 bg-white/60 hover:bg-white/80 text-gray-700 text-sm rounded-full border border-red-200 hover:border-red-300 transition-colors shadow-sm hover:shadow-md"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </form>
+        </div>
+      </div>
+
       {/* Navigation Links */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

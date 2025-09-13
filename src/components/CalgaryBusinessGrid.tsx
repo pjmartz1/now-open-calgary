@@ -8,6 +8,11 @@ interface CalgaryBusinessGridProps {
   title?: string
   subtitle?: string
   className?: string
+  searchContext?: {
+    search?: string
+    category?: string
+    community?: string
+  }
 }
 
 function formatDate(dateString: string): string {
@@ -33,11 +38,31 @@ function getCategoryColor(category: string | null): string {
   return categoryColors[category || 'other'] || 'bg-gray-100 text-gray-700'
 }
 
+function generateBusinessUrl(slug: string, searchContext?: {
+  search?: string
+  category?: string
+  community?: string
+}): string {
+  const baseUrl = `/business/${slug}`
+  
+  if (!searchContext || (!searchContext.search && !searchContext.category && !searchContext.community)) {
+    return baseUrl
+  }
+  
+  const params = new URLSearchParams()
+  if (searchContext.search) params.set('from_search', searchContext.search)
+  if (searchContext.category) params.set('from_category', searchContext.category)
+  if (searchContext.community) params.set('from_community', searchContext.community)
+  
+  return `${baseUrl}?${params.toString()}`
+}
+
 export default function CalgaryBusinessGrid({ 
   businesses, 
   title, 
   subtitle, 
-  className 
+  className,
+  searchContext 
 }: CalgaryBusinessGridProps) {
   if (businesses.length === 0) {
     return (
@@ -49,11 +74,11 @@ export default function CalgaryBusinessGrid({
   }
 
   return (
-    <section className={className}>
+    <section className={className} role="region" aria-label="Business listings">
       {(title || subtitle) && (
         <div className="text-center mb-8">
           {title && (
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">{title}</h2>
+            <h2 id="business-grid-title" className="text-3xl font-bold text-gray-900 mb-2">{title}</h2>
           )}
           {subtitle && (
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">{subtitle}</p>
@@ -61,12 +86,19 @@ export default function CalgaryBusinessGrid({
         </div>
       )}
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        role="list"
+        aria-labelledby={title ? "business-grid-title" : undefined}
+        aria-label={!title ? "Business listings" : undefined}
+      >
         {businesses.map((business) => (
           <Link
             key={business.id}
-            href={`/business/${business.slug}`}
-            className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-indigo-200"
+            href={generateBusinessUrl(business.slug, searchContext)}
+            className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            role="listitem"
+            aria-label={`View details for ${business.tradename} - ${business.category} business${business.community ? ` in ${business.community}` : ''}`}
           >
             {/* Header with badges - Fixed uniform layout */}
             <div className="p-6 h-full flex flex-col">

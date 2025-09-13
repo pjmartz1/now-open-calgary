@@ -18,6 +18,7 @@ export default function Footer() {
                   src="/logo.svg"
                   alt="Now Open Calgary Logo"
                   fill
+                  sizes="32px"
                   className="object-contain"
                 />
               </div>

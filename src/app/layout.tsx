@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Script from "next/script";
 
 export const metadata: Metadata = {
   title: {
-    default: "New Businesses Calgary 2025 | Latest Restaurant & Shop Openings | Now Open Calgary",
+    default: "🔥 500+ New Calgary Restaurants 2025 | Fresh Openings Daily | Now Open YYC",
     template: "%s | Now Open Calgary"
   },
-  description: "Find 500+ new businesses opening in Calgary 2025! Fresh restaurants, shops & services with addresses, hours & reviews. Updated daily. Your #1 Calgary business directory.",
+  description: "⭐ EXCLUSIVE: 500+ Calgary restaurants opened in 2025! Get first access to pizza spots, cafes & fine dining before the crowds. Updated daily with addresses + menus.",
   keywords: ["new businesses calgary", "calgary business directory", "new restaurants calgary 2025", "latest calgary openings", "calgary new shops", "YYC business openings", "fresh businesses calgary", "new services calgary", "calgary restaurant openings", "newest stores calgary"],
   authors: [{ name: "Now Open Calgary" }],
   creator: "Now Open Calgary",
@@ -24,8 +25,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: "New Businesses Calgary 2025 | Latest Restaurant & Shop Openings",
-    description: "Find 500+ new businesses opening in Calgary 2025! Fresh restaurants, shops & services with addresses, hours & reviews. Updated daily.",
+    title: "🔥 500+ New Calgary Restaurants 2025 | Fresh Openings Daily",
+    description: "⭐ EXCLUSIVE: 500+ Calgary restaurants opened in 2025! Get first access to pizza spots, cafes & fine dining before the crowds. Updated daily.",
     url: 'https://www.nowopencalgary.ca',
     siteName: 'Now Open Calgary',
     images: [
@@ -41,8 +42,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "New Businesses Calgary 2025 | Latest Restaurant & Shop Openings",
-    description: "Find 500+ new businesses opening in Calgary 2025! Fresh restaurants, shops & services. Updated daily.",
+    title: "🔥 500+ New Calgary Restaurants 2025 | Fresh Openings Daily",
+    description: "⭐ EXCLUSIVE: 500+ Calgary restaurants opened in 2025! Get first access before the crowds. Updated daily.",
     images: ['/og-image.svg'],
   },
   robots: {
@@ -118,11 +119,13 @@ export default function RootLayout({
         )}
       </head>
       <body className="antialiased">
-        <Header />
-        <main>
-          {children}
-        </main>
-        <Footer />
+        <ErrorBoundary>
+          <Header />
+          <main>
+            {children}
+          </main>
+          <Footer />
+        </ErrorBoundary>
       </body>
     </html>
   );

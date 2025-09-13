@@ -1,0 +1,184 @@
+name: Database Maintenance
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC (update search vectors)
+    - cron: '0 2 * * *'
+    # Run weekly maintenance on Sunday at 3 AM UTC  
+    - cron: '0 3 * * 0'
+  
+  workflow_dispatch:
+    inputs:
+      maintenance_type:
+        description: 'Type of maintenance to run'
+        required: true
+        default: 'routine'
+        type: choice
+        options:
+          - routine
+          - full
+          - search_vectors_only
+
+jobs:
+  database-maintenance:
+    name: Database Maintenance
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run search vector update (daily)
+        if: github.event.schedule == '0 2 * * *' || github.event.inputs.maintenance_type == 'search_vectors_only'
+        run: |
+          node -e "
+          const { createClient } = require('@supabase/supabase-js');
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY
+          );
+          
+          (async () => {
+            console.log('🔄 Updating search vectors...');
+            const { data, error } = await supabase.rpc('update_search_vectors');
+            
+            if (error) {
+              console.error('❌ Error updating search vectors:', error);
+              process.exit(1);
+            }
+            
+            console.log('✅ Search vectors updated successfully');
+          })();
+          "
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Run weekly maintenance
+        if: github.event.schedule == '0 3 * * 0' || github.event.inputs.maintenance_type == 'routine'
+        run: |
+          node -e "
+          const { createClient } = require('@supabase/supabase-js');
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY
+          );
+          
+          (async () => {
+            console.log('🔄 Running weekly maintenance...');
+            const { data, error } = await supabase.rpc('run_maintenance');
+            
+            if (error) {
+              console.error('❌ Error running maintenance:', error);
+              process.exit(1);
+            }
+            
+            console.log('✅ Weekly maintenance completed:', data);
+          })();
+          "
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Run full maintenance
+        if: github.event.inputs.maintenance_type == 'full'
+        run: |
+          node -e "
+          const { createClient } = require('@supabase/supabase-js');
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY
+          );
+          
+          (async () => {
+            console.log('🔄 Running full maintenance...');
+            
+            // Run maintenance
+            const { data: maintenanceData, error: maintenanceError } = await supabase.rpc('run_maintenance');
+            if (maintenanceError) {
+              console.error('❌ Error running maintenance:', maintenanceError);
+              process.exit(1);
+            }
+            
+            // Analyze performance
+            const { data: perfData, error: perfError } = await supabase.rpc('analyze_query_performance');
+            if (perfError) {
+              console.warn('⚠️ Warning analyzing performance:', perfError);
+            } else {
+              console.log('📊 Performance analysis:', perfData);
+            }
+            
+            console.log('✅ Full maintenance completed');
+          })();
+          "
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Verify database health
+        run: |
+          node -e "
+          const { createClient } = require('@supabase/supabase-js');
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY
+          );
+          
+          (async () => {
+            console.log('🔍 Checking database health...');
+            
+            // Test basic connectivity and get business count
+            const { count, error } = await supabase
+              .from('calgary_businesses')
+              .select('*', { count: 'exact', head: true })
+              .eq('active', true);
+              
+            if (error) {
+              console.error('❌ Database health check failed:', error);
+              process.exit(1);
+            }
+            
+            console.log(\`✅ Database healthy. Active businesses: \${count}\`);
+            
+            // Check for recent data
+            const { data: recent, error: recentError } = await supabase
+              .from('calgary_businesses')
+              .select('first_issued_date')
+              .eq('active', true)
+              .order('created_at', { ascending: false })
+              .limit(1);
+              
+            if (recent && recent.length > 0) {
+              console.log(\`📅 Most recent business: \${recent[0].first_issued_date}\`);
+            }
+          })();
+          "
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+  notify-results:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [database-maintenance]
+    if: always()
+    
+    steps:
+      - name: Notify success
+        if: needs.database-maintenance.result == 'success'
+        run: echo "✅ Database maintenance completed successfully"
+        
+      - name: Notify failure
+        if: needs.database-maintenance.result == 'failure'
+        run: |
+          echo "❌ Database maintenance failed"
+          echo "Please check the logs and run manual maintenance if needed"

@@ -10,6 +10,11 @@ import MapPlaceholder from '@/components/MapPlaceholder'
 
 interface Props {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{
+    from_search?: string
+    from_category?: string
+    from_community?: string
+  }>
 }
 
 // Enable static generation for better SEO and performance
@@ -189,12 +194,20 @@ function BusinessSchema({ business }: { business: CalgaryBusiness }) {
   )
 }
 
-export default async function BusinessPage({ params }: Props) {
+export default async function BusinessPage({ params, searchParams }: Props) {
   const { slug } = await params
   const business = await BusinessService.getCalgaryBusinessBySlug(slug)
 
   if (!business) {
     notFound()
+  }
+
+  // Extract search context from URL parameters
+  const urlParams = await searchParams
+  const searchContext = {
+    search: urlParams.from_search,
+    category: urlParams.from_category,
+    community: urlParams.from_community
   }
 
   const isNew = new Date(business.first_issued_date) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
@@ -207,7 +220,11 @@ export default async function BusinessPage({ params }: Props) {
         {/* Breadcrumbs */}
         <div className="bg-white border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Breadcrumbs items={getBusinessBreadcrumbs(business.tradename, business.category || undefined)} />
+            <Breadcrumbs items={getBusinessBreadcrumbs(
+              business.tradename, 
+              business.category || undefined,
+              searchContext.search || searchContext.category || searchContext.community ? searchContext : undefined
+            )} />
           </div>
         </div>
 
@@ -261,11 +278,19 @@ export default async function BusinessPage({ params }: Props) {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                      <Share2 className="w-5 h-5" />
+                    <button 
+                      className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      aria-label={`Share ${business.tradename}`}
+                      title="Share this business"
+                    >
+                      <Share2 className="w-5 h-5" aria-hidden="true" />
                     </button>
-                    <button className="p-2 text-gray-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
-                      <Bookmark className="w-5 h-5" />
+                    <button 
+                      className="p-2 text-gray-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                      aria-label={`Bookmark ${business.tradename}`}
+                      title="Bookmark this business"
+                    >
+                      <Bookmark className="w-5 h-5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -290,9 +315,10 @@ export default async function BusinessPage({ params }: Props) {
                         href={generateGoogleMapsUrl(business)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                        className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        aria-label={`View ${business.tradename} location on Google Maps (opens in new tab)`}
                       >
-                        <ExternalLink className="w-4 h-4 mr-2" />
+                        <ExternalLink className="w-4 h-4 mr-2" aria-hidden="true" />
                         View on Google Maps
                       </a>
                       
@@ -300,9 +326,10 @@ export default async function BusinessPage({ params }: Props) {
                         href={generateDirectionsUrl(business)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                        className="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                        aria-label={`Get directions to ${business.tradename} (opens in new tab)`}
                       >
-                        <Navigation className="w-4 h-4 mr-2" />
+                        <Navigation className="w-4 h-4 mr-2" aria-hidden="true" />
                         Get Directions
                       </a>
                     </div>

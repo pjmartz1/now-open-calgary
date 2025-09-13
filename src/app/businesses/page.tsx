@@ -1,6 +1,8 @@
 import { Suspense } from 'react'
 import { Search, MapPin, Tag } from 'lucide-react'
 import CalgaryBusinessGrid from '@/components/CalgaryBusinessGrid'
+import { BusinessGridSkeleton } from '@/components/BusinessCardSkeleton'
+import { BusinessLoadingErrorBoundary, SearchErrorBoundary } from '@/components/ErrorBoundary'
 import { BusinessService } from '@/services/businessService'
 import { Metadata } from 'next'
 
@@ -62,7 +64,14 @@ async function BusinessListings({
         </div>
       </div>
 
-      <CalgaryBusinessGrid businesses={businesses} />
+      <CalgaryBusinessGrid 
+        businesses={businesses} 
+        searchContext={{
+          search: search || undefined,
+          category: category || undefined,
+          community: community || undefined
+        }}
+      />
 
       {/* Pagination */}
       {totalPages > 1 && (
@@ -134,49 +143,47 @@ export default async function BusinessesPage({ searchParams }: Props) {
             <p className="text-xl text-indigo-100 max-w-2xl mx-auto">
               Discover the newest businesses opening their doors in Calgary. Find restaurants, shops, services, and more.
             </p>
-            
-            <Suspense fallback={
-              <div className="mt-6 text-indigo-200">Loading businesses...</div>
-            }>
-              <BusinessListings 
-                page={page} 
-                search={search} 
-                category={category} 
-                community={community} 
-              />
-            </Suspense>
           </div>
         </div>
       </div>
 
-      {/* Search and Filters Form */}
-      <div className="bg-white border-b border-gray-200">
+      {/* Search and Filters Form - MOVED TO TOP */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <form method="GET" action="/businesses" className="space-y-4">
+          <form method="GET" action="/businesses" className="space-y-4" role="search" aria-label="Search and filter businesses">
             {/* Search Bar */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" aria-hidden="true" />
               <input
-                type="text"
+                type="search"
                 name="search"
+                id="business-search"
                 placeholder="Search businesses, locations, or categories..."
                 defaultValue={search}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg"
+                className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg shadow-sm"
+                aria-label="Search businesses by name, location, or category"
+                aria-describedby="search-help"
               />
+              <div id="search-help" className="sr-only">
+                Enter keywords to search for businesses by name, address, community, or category
+              </div>
             </div>
 
             {/* Filters Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Category Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Tag className="inline w-4 h-4 mr-1" />
+                <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                  <Tag className="inline w-4 h-4 mr-1" aria-hidden="true" />
                   Category
                 </label>
                 <select
+                  id="category-filter"
                   name="category"
                   defaultValue={category}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                  aria-label="Filter businesses by category"
+                  aria-describedby="category-help"
                 >
                   <option value="">All Categories</option>
                   {categories.map((cat) => (
@@ -185,18 +192,24 @@ export default async function BusinessesPage({ searchParams }: Props) {
                     </option>
                   ))}
                 </select>
+                <div id="category-help" className="sr-only">
+                  Filter results to show only businesses in a specific category
+                </div>
               </div>
 
               {/* Community Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <MapPin className="inline w-4 h-4 mr-1" />
+                <label htmlFor="community-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                  <MapPin className="inline w-4 h-4 mr-1" aria-hidden="true" />
                   Community
                 </label>
                 <select
+                  id="community-filter"
                   name="community"
                   defaultValue={community}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                  aria-label="Filter businesses by community"
+                  aria-describedby="community-help"
                 >
                   <option value="">All Communities</option>
                   {communities.map((comm) => (
@@ -205,13 +218,17 @@ export default async function BusinessesPage({ searchParams }: Props) {
                     </option>
                   ))}
                 </select>
+                <div id="community-help" className="sr-only">
+                  Filter results to show only businesses in a specific Calgary community
+                </div>
               </div>
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <button
                 type="submit"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm"
+                aria-label="Apply search and filter criteria to business listings"
               >
                 Apply Filters
               </button>
@@ -219,9 +236,10 @@ export default async function BusinessesPage({ searchParams }: Props) {
               {activeFiltersCount > 0 && (
                 <a
                   href="/businesses"
-                  className="text-sm text-gray-500 hover:text-gray-700 underline"
+                  className="text-sm text-gray-500 hover:text-gray-700 underline focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-sm"
+                  aria-label={`Clear all ${activeFiltersCount} active filters and show all businesses`}
                 >
-                  Clear all filters
+                  Clear all filters ({activeFiltersCount} active)
                 </a>
               )}
             </div>
@@ -231,19 +249,24 @@ export default async function BusinessesPage({ searchParams }: Props) {
 
       {/* Business Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Suspense fallback={
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading businesses...</p>
-          </div>
-        }>
-          <BusinessListings 
-            page={page} 
-            search={search} 
-            category={category} 
-            community={community} 
-          />
-        </Suspense>
+        <BusinessLoadingErrorBoundary>
+          <Suspense fallback={
+            <div className="py-8">
+              <div className="text-center mb-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
+                <p className="text-gray-600">Loading businesses...</p>
+              </div>
+              <BusinessGridSkeleton count={20} />
+            </div>
+          }>
+            <BusinessListings 
+              page={page} 
+              search={search} 
+              category={category} 
+              community={community} 
+            />
+          </Suspense>
+        </BusinessLoadingErrorBoundary>
       </div>
     </div>
   )
