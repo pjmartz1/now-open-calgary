@@ -17,17 +17,17 @@ jobs:
         run: |
           echo "🔍 Checking website health..."
           
-          # Check main website
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://nowopencalgary.ca)
+          # Check main website (with www - 308 redirect is expected behavior)
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://www.nowopencalgary.ca)
           if [ $RESPONSE -eq 200 ]; then
             echo "✅ Main website: OK (200)"
           else
             echo "❌ Main website: ERROR ($RESPONSE)"
             exit 1
           fi
-          
+
           # Check API endpoint
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://nowopencalgary.ca/api/health)
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://www.nowopencalgary.ca/api/health)
           if [ $RESPONSE -eq 200 ]; then
             echo "✅ API health check: OK (200)"
           else
@@ -40,7 +40,7 @@ jobs:
           
           # Test homepage load time
           START_TIME=$(date +%s%N)
-          curl -s https://nowopencalgary.ca > /dev/null
+          curl -s https://www.nowopencalgary.ca > /dev/null
           END_TIME=$(date +%s%N)
           LOAD_TIME=$(( (END_TIME - START_TIME) / 1000000 ))
           
@@ -57,7 +57,7 @@ jobs:
           echo "🗄️ Testing database connectivity..."
           
           # Simple connectivity test via API
-          RESPONSE=$(curl -s "https://nowopencalgary.ca/api/health/database" | jq -r '.status' 2>/dev/null || echo "error")
+          RESPONSE=$(curl -s "https://www.nowopencalgary.ca/api/health/database" | jq -r '.status' 2>/dev/null || echo "error")
           
           if [ "$RESPONSE" = "healthy" ]; then
             echo "✅ Database: Connected and healthy"
@@ -105,8 +105,8 @@ jobs:
         run: |
           echo "🔒 Checking SSL certificate..."
           
-          # Check SSL certificate expiration
-          EXPIRY=$(echo | openssl s_client -servername nowopencalgary.ca -connect nowopencalgary.ca:443 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2)
+          # Check SSL certificate expiration (use www version)
+          EXPIRY=$(echo | openssl s_client -servername www.nowopencalgary.ca -connect www.nowopencalgary.ca:443 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2)
           EXPIRY_EPOCH=$(date -d "$EXPIRY" +%s)
           CURRENT_EPOCH=$(date +%s)
           DAYS_UNTIL_EXPIRY=$(( (EXPIRY_EPOCH - CURRENT_EPOCH) / 86400 ))
@@ -124,7 +124,7 @@ jobs:
         run: |
           echo "🛡️ Checking security headers..."
           
-          HEADERS=$(curl -s -I https://nowopencalgary.ca)
+          HEADERS=$(curl -s -I https://www.nowopencalgary.ca)
           
           if echo "$HEADERS" | grep -q "X-Frame-Options"; then
             echo "✅ X-Frame-Options header present"

@@ -1,12 +1,8 @@
 name: Business Data Sync
 
 on:
-  schedule:
-    # Run daily at 1 AM UTC (sync recent businesses)
-    - cron: '0 1 * * *'
-    # Run full sync weekly on Saturday at 2 AM UTC
-    - cron: '0 2 * * 6'
-  
+  # Scheduled cron jobs removed to avoid conflict with Vercel cron
+  # Vercel handles daily sync at 13:00 UTC via vercel.json
   workflow_dispatch:
     inputs:
       sync_mode:
@@ -46,111 +42,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run daily sync (scheduled)
-        if: github.event.schedule == '0 1 * * *'
-        run: |
-          echo "🔄 Running daily business sync..."
-          
-          RESPONSE=$(curl -s -X POST \
-            -H "Authorization: Bearer ${{ secrets.API_SECRET_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"mode": "recent", "daysBack": 3, "limit": 1000}' \
-            "${{ secrets.NEXT_PUBLIC_SITE_URL }}/api/sync-businesses")
-          
-          echo "Response: $RESPONSE"
-          
-          # Check if sync was successful
-          SUCCESS=$(echo "$RESPONSE" | jq -r '.success')
-          if [ "$SUCCESS" != "true" ]; then
-            echo "❌ Daily sync failed"
-            exit 1
-          else
-            echo "✅ Daily sync completed successfully"
-            
-            # Extract and display stats
-            INSERTED=$(echo "$RESPONSE" | jq -r '.stats.inserted')
-            UPDATED=$(echo "$RESPONSE" | jq -r '.stats.updated')
-            PROCESSED=$(echo "$RESPONSE" | jq -r '.stats.processed')
-            
-            echo "📊 Sync Stats:"
-            echo "  - Processed: $PROCESSED businesses"
-            echo "  - Inserted: $INSERTED new businesses"
-            echo "  - Updated: $UPDATED existing businesses"
-          fi
-
-      - name: Run weekly gradual sync (scheduled)
-        if: github.event.schedule == '0 2 * * 6'
-        run: |
-          echo "🔄 Running weekly gradual business sync..."
-          echo "This runs multiple date-range syncs to gradually build the complete dataset"
-          
-          # Initialize totals
-          TOTAL_INSERTED=0
-          TOTAL_UPDATED=0
-          TOTAL_PROCESSED=0
-          
-          # Define sync periods (working backwards from recent to older data)
-          # Each sync is small enough to avoid Vercel timeouts
-          declare -a SYNC_PERIODS=(
-            "30:Last 30 days"
-            "90:Last 90 days"
-            "180:Last 6 months"  
-            "365:Last 1 year"
-            "730:Last 2 years"
-            "1095:Last 3 years"
-            "1825:Last 5 years"
-            "3650:All data (10 years)"
-          )
-          
-          for period in "${SYNC_PERIODS[@]}"; do
-            IFS=':' read -r days description <<< "$period"
-            
-            echo ""
-            echo "📅 Syncing: $description ($days days back)..."
-            
-            RESPONSE=$(curl -s -X POST \
-              -H "Authorization: Bearer ${{ secrets.API_SECRET_KEY }}" \
-              -H "Content-Type: application/json" \
-              -d "{\"mode\": \"recent\", \"daysBack\": $days, \"limit\": 500}" \
-              "${{ secrets.NEXT_PUBLIC_SITE_URL }}/api/sync-businesses")
-            
-            echo "Response: $RESPONSE"
-            
-            # Check if sync was successful
-            SUCCESS=$(echo "$RESPONSE" | jq -r '.success')
-            if [ "$SUCCESS" != "true" ]; then
-              echo "⚠️ $description sync failed, continuing with next period"
-              continue
-            fi
-            
-            # Extract stats
-            PERIOD_FETCHED=$(echo "$RESPONSE" | jq -r '.stats.fetched // 0')
-            PERIOD_INSERTED=$(echo "$RESPONSE" | jq -r '.stats.inserted // 0')
-            PERIOD_UPDATED=$(echo "$RESPONSE" | jq -r '.stats.updated // 0')
-            PERIOD_PROCESSED=$(echo "$RESPONSE" | jq -r '.stats.processed // 0')
-            DURATION=$(echo "$RESPONSE" | jq -r '.duration // 0')
-            
-            # Add to totals
-            TOTAL_INSERTED=$((TOTAL_INSERTED + PERIOD_INSERTED))
-            TOTAL_UPDATED=$((TOTAL_UPDATED + PERIOD_UPDATED))
-            TOTAL_PROCESSED=$((TOTAL_PROCESSED + PERIOD_PROCESSED))
-            
-            echo "✅ $description completed in ${DURATION}ms:"
-            echo "   - Fetched: $PERIOD_FETCHED from Calgary API"
-            echo "   - Processed: $PERIOD_PROCESSED businesses"
-            echo "   - Inserted: $PERIOD_INSERTED new"
-            echo "   - Updated: $PERIOD_UPDATED existing"
-            
-            # Small delay between syncs
-            sleep 3
-          done
-          
-          echo ""
-          echo "📊 Weekly Gradual Sync Summary:"
-          echo "  - Total periods synced: ${#SYNC_PERIODS[@]}"
-          echo "  - Total inserted: $TOTAL_INSERTED new businesses"
-          echo "  - Total updated: $TOTAL_UPDATED existing businesses"
-          echo "  - Total processed: $TOTAL_PROCESSED businesses"
+      # Scheduled sync steps removed - Vercel cron handles daily sync now
 
       - name: Run manual sync (workflow_dispatch)
         if: github.event_name == 'workflow_dispatch'

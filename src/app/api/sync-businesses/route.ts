@@ -4,10 +4,13 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { 
-  fetchRecentBusinesses, 
+import {
+  fetchRecentBusinesses,
   fetchAllBusinesses
 } from '@/lib/calgary-api'
+
+// Configure route-level timeout for Vercel
+export const maxDuration = 60
 
 // Security: Only create admin client with service role key (not anon key)
 let supabaseAdmin: ReturnType<typeof createClient> | null = null
@@ -200,8 +203,8 @@ export async function POST(request: NextRequest) {
       } as SyncResult, { status: 500 })
     }
 
-    // Process businesses in batches
-    const batchSize = 100
+    // Process businesses in batches (reduced for Vercel timeout prevention)
+    const batchSize = 50
     let processed = 0
 
     for (let i = 0; i < businessData.length; i += batchSize) {
