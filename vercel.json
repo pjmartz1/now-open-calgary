@@ -6,10 +6,10 @@
     }
   ],
   "functions": {
-    "app/api/cron/daily-sync/route.ts": {
+    "src/app/api/cron/daily-sync/route.ts": {
       "maxDuration": 60
     },
-    "app/api/sync-businesses/route.ts": {
+    "src/app/api/sync-businesses/route.ts": {
       "maxDuration": 60
     }
   }
