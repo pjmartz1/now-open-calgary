@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Configure route-level timeout for Vercel
+export const maxDuration = 60
+
 export async function GET(request: NextRequest) {
   try {
     // Verify this is a legitimate cron request from Vercel

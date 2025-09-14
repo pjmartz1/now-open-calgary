@@ -4,10 +4,13 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { 
-  fetchRecentBusinesses, 
+import {
+  fetchRecentBusinesses,
   fetchAllBusinesses
 } from '@/lib/calgary-api'
+
+// Configure route-level timeout for Vercel
+export const maxDuration = 60
 
 // Security: Only create admin client with service role key (not anon key)
 let supabaseAdmin: ReturnType<typeof createClient> | null = null
