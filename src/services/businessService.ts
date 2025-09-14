@@ -335,7 +335,7 @@ export class BusinessService {
     }
   }
 
-  // Get all Calgary businesses with pagination and filters (optimized)
+  // Get all Calgary businesses with pagination and filters
   static async getAllCalgaryBusinesses(params: {
     search?: string
     category?: string
@@ -350,77 +350,39 @@ export class BusinessService {
 
       const { search, category, community, limit = 20, offset = 0 } = params
 
-      // Create cache key from parameters
-      const cacheKey = `businesses_${JSON.stringify({
-        search: search || '',
-        category: category || '',
-        community: community || '',
-        limit,
-        offset
-      })}`
-
-      const cached = cache.get<{ businesses: BusinessCardData[], total: number }>(cacheKey)
-      if (cached) return cached
-
-      // Try optimized RPC function first
-      const { data: rpcData, error: rpcError } = await supabase
-        .rpc('get_businesses_optimized', {
-          search_term: search ? sanitizeSearchQuery(search) : null,
-          filter_category: category || null,
-          filter_community: community || null,
-          result_limit: limit,
-          result_offset: offset
-        })
-
-      if (!rpcError && rpcData) {
-        const result = {
-          businesses: rpcData.businesses || [],
-          total: rpcData.total || 0
-        }
-        // Cache for 3 minutes
-        cache.set(cacheKey, result, 3 * 60 * 1000)
-        return result
-      }
-
-      // Fallback to original query with optimizations
-      let baseQuery = supabase
+      let query = supabase
         .from('calgary_businesses')
         .select('*', { count: 'exact' })
         .eq('active', true)
         .eq('is_consumer_facing', true)
 
-      // Apply filters in order of selectivity (most selective first)
-      if (category) {
-        baseQuery = baseQuery.eq('category', category)
-      }
-      if (community) {
-        baseQuery = baseQuery.eq('community', community)  
-      }
+      // Apply filters
       if (search) {
         const sanitizedSearch = sanitizeSearchQuery(search)
         if (sanitizedSearch) {
-          // Use more selective tradename search first, then broader search
-          baseQuery = baseQuery.or(`tradename.ilike.%${sanitizedSearch}%,address.ilike.%${sanitizedSearch}%,community.ilike.%${sanitizedSearch}%,category.ilike.%${sanitizedSearch}%`)
+          query = query.or(`tradename.ilike.%${sanitizedSearch}%,address.ilike.%${sanitizedSearch}%,community.ilike.%${sanitizedSearch}%,category.ilike.%${sanitizedSearch}%`)
         }
       }
+      if (category) {
+        query = query.eq('category', category)
+      }
+      if (community) {
+        query = query.eq('community', community)
+      }
 
-      // Apply pagination and ordering
-      const finalQuery = baseQuery
+      // Apply pagination
+      query = query
         .order('first_issued_date', { ascending: false })
         .range(offset, offset + limit - 1)
 
-      const { data, error, count } = await finalQuery
+      const { data, error, count } = await query
 
       if (error) throw error
 
-      const result = {
+      return {
         businesses: data || [],
         total: count || 0
       }
-
-      // Cache for 3 minutes
-      cache.set(cacheKey, result, 3 * 60 * 1000)
-      return result
     } catch (error) {
       console.error('Error fetching all Calgary businesses:', error)
       return { businesses: [], total: 0 }
