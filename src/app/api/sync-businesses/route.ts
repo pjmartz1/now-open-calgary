@@ -200,8 +200,8 @@ export async function POST(request: NextRequest) {
       } as SyncResult, { status: 500 })
     }
 
-    // Process businesses in batches
-    const batchSize = 100
+    // Process businesses in batches (reduced for Vercel timeout prevention)
+    const batchSize = 50
     let processed = 0
 
     for (let i = 0; i < businessData.length; i += batchSize) {

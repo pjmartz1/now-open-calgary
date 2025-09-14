@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
       },
       body: JSON.stringify({
         mode: 'recent',
-        daysBack: 30, // Sync businesses from last 30 days to catch any missed updates
-        limit: 1000,
+        daysBack: 7, // Reduced from 30 to 7 days to prevent timeouts
+        limit: 200, // Reduced from 1000 to 200 to stay within Vercel limits
         dryRun: false
       })
     })
